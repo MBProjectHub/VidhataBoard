@@ -43,42 +43,8 @@ class Profile extends React.Component {
           <Row>
             <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
               <Card className="card-profile shadow">
-                <Row className="justify-content-center">
-                  <Col className="order-lg-2" lg="3">
-                    <div className="card-profile-image">
-                      <a href="#pablo" onClick={e => e.preventDefault()}>
-                        <img
-                          alt="..."
-                          className="rounded-circle"
-                          src={require("assets/img/theme/team-4-800x800.jpg")}
-                        />
-                      </a>
-                    </div>
-                  </Col>
-                </Row>
-                <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                  <div className="d-flex justify-content-between">
-                    <Button
-                      className="mr-4"
-                      color="info"
-                      href="#pablo"
-                      onClick={e => e.preventDefault()}
-                      size="sm"
-                    >
-                      Connect
-                    </Button>
-                    <Button
-                      className="float-right"
-                      color="default"
-                      href="#pablo"
-                      onClick={e => e.preventDefault()}
-                      size="sm"
-                    >
-                      Message
-                    </Button>
-                  </div>
-                </CardHeader>
                 <CardBody className="pt-0 pt-md-4">
+                  <button type="button" class="btn btn-info" style={{ width: '94%', marginTop: '3%', marginLeft: '3%' }}>Jessica Jones</button>
                   <Row>
                     <div className="col">
                       <div className="card-profile-stats d-flex justify-content-center mt-md-5">
@@ -120,12 +86,13 @@ class Profile extends React.Component {
                       Nick Murphy — writes, performs and records all of his own
                       music.
                     </p>
-                    <a href="#pablo" onClick={e => e.preventDefault()}>
-                      Show more
-                    </a>
                   </div>
                 </CardBody>
               </Card>
+              <button class="btn btn-icon btn-3 btn-info" type="button" style={{ marginTop: 30, width: '100%', height: 70  }}>
+                <span class="btn-inner--icon" style={{fontSize: 18}}><i class="ni ni-button-power"></i></span>
+                <span class="btn-inner--text" style={{fontSize: 16}}>Sign Out</span>
+              </button>
             </Col>
             <Col className="order-xl-1" xl="8">
               <Card className="bg-secondary shadow">
