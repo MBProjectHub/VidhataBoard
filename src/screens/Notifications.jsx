@@ -22,7 +22,11 @@ import {
   Card,
   CardHeader,
   Container,
-  Row
+  Row,
+  Button,
+  InputGroup,
+  InputGroupAddon,
+  Input
 } from "reactstrap";
 // core components
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
@@ -58,10 +62,29 @@ class Notifications extends React.Component {
                   <div class="row">
                     <div class="col">
                     <form style={{ marginBottom: 20 }}>
-                      <textarea class="form-control form-control-alternative" rows="3" placeholder="Enter Custom Notification..."></textarea>
+                      <textarea class="form-control form-control-alternative" rows="10" placeholder="Enter Custom Notification..."></textarea>
                     </form>
                     </div>
                   </div>
+
+                  <div class="row">
+                    <div class="col">
+                      <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+                        <Button block color="primary" size="lg" type="button" style={{marginBottom: 20, width: '80%'}}>
+                          Send
+                        </Button>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <InputGroup >
+                        <InputGroupAddon addonType="prepend" style={{width: '50%'}} >
+                          <Button style={{paddingLeft:'20%', paddingRight:'20%'}}  block color="primary" size="lg"  type="button">Schedule Send</Button>
+                        </InputGroupAddon>
+                        <Input placeholder="Enter the Date and Time" style={{paddingLeft:'10%',height: 51}}/>
+                      </InputGroup>
+                    </div>
+                  </div>
+
                 </div>
               </Card>
             </div>
