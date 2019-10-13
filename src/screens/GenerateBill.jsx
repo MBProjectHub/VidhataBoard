@@ -40,7 +40,7 @@ import {
 // core components
 import Header from "components/Headers/Header.jsx";
 
-class Tables extends React.Component {
+class GenerateBill extends React.Component {
   render() {
     return (
       <>
@@ -1656,4 +1656,4 @@ class Tables extends React.Component {
   }
 }
 
-export default Tables;
+export default GenerateBill;

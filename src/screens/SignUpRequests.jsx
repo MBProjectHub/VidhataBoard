@@ -40,7 +40,7 @@ import {
 // core components
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
 
-class Tables extends React.Component {
+class SignUpRequests extends React.Component {
   render() {
     return (
       <>
@@ -1656,4 +1656,4 @@ class Tables extends React.Component {
   }
 }
 
-export default Tables;
+export default SignUpRequests;
