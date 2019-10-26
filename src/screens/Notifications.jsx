@@ -80,7 +80,7 @@ class Notifications extends React.Component {
                         <InputGroupAddon addonType="prepend" style={{width: '50%'}} >
                           <Button style={{paddingLeft:'20%', paddingRight:'20%'}}  block color="info" size="lg"  type="button">Schedule Send</Button>
                         </InputGroupAddon>
-                        <Input placeholder="Enter the Date and Time" style={{paddingLeft:'10%',height: 51}}/>
+                        <Input placeholder="dd/mm/yyyy" style={{paddingLeft:'10%',height: 51}}/>
                       </InputGroup>
                     </div>
                   </div>
