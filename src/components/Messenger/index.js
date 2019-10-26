@@ -4,6 +4,9 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import {Row, Col, Container, Button} from 'reactstrap'
 
+
+import { Card as SemanticCard } from 'semantic-ui-react'
+
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 
@@ -125,6 +128,25 @@ export default class Messenger extends React.Component {
     }
   }
 
+  loadContent(conversation)
+  {
+    if(conversation.stage == 0)
+    {
+      return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
+      <RequestForm />
+    </div>
+    }
+    else
+    {
+      return <SemanticCard
+      href='#card-example-link-card'
+      header='Elliot Baker'
+      meta='Friend'
+      description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+    />
+    }
+  }
+
   loadStage()
   {
     if(this.state.currentSelected!=="")
@@ -143,9 +165,7 @@ export default class Messenger extends React.Component {
         </Row> 
         </Container> 
 
-        <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-          <RequestForm />
-        </div>
+        {this.loadContent(this.state.currentConversation)}
 
         <div  style={{position:'absolute' ,bottom :0 , width:'100%',height:'12%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
         <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'20%'}}>
