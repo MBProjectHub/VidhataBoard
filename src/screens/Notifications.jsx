@@ -75,6 +75,7 @@ class Notifications extends React.Component {
                         </Button>
                       </div>
                     </div>
+                    
                     <div class="col">
                       <InputGroup >
                         <InputGroupAddon addonType="prepend" style={{width: '50%'}} >
