@@ -24,7 +24,7 @@ import { Container, Row, Col, Nav, NavItem, NavLink } from "reactstrap";
 class Footer extends React.Component {
   render() {
     return (
-      <footer className="footer">
+      <footer className="footer" style={{backgroundColor:'#f8f9fe'}}>
       </footer>
     );
   }

@@ -26,7 +26,7 @@ import {
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.jsx";
-import VerticalTabs from "components/VerticalTabs.js";
+import Messenger from "components/Messenger";
 
 class Bookings extends React.Component {
   render() {
@@ -34,6 +34,7 @@ class Bookings extends React.Component {
       <>
         <Header />
         {/* Page content */}
+        
         <Container className="mt--7" fluid>
           {/* Table */}
           <Row>
@@ -42,10 +43,11 @@ class Bookings extends React.Component {
                 <CardHeader className="border-0">
                   <h3 className="mb-0">Booking Requests</h3>
                 </CardHeader>
-                <VerticalTabs />
+                <Messenger />
               </Card>
             </div>
           </Row>
+          
         </Container>
       </>
     );
