@@ -46,7 +46,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function IconLabelTabs(props) {
+export default function NotifTabs(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -64,18 +64,14 @@ export default function IconLabelTabs(props) {
         textColor="primary"
         aria-label="icon label tabs example"
       >
-        <Tab icon={<i class="ni ni-sound-wave" style={{ fontSize: 20 }}></i>} label="Pending" {...a11yProps(0)} />
-        <Tab icon={<i class="ni ni-check-bold" style={{ fontSize: 20 }}></i>} label="Allowed" {...a11yProps(1)} />
-        <Tab icon={<i class="ni ni-active-40" style={{ fontSize: 20 }}></i>} label="Rejected" {...a11yProps(2)} />
+        <Tab icon={<i class="ni ni-notification-70" style={{ fontSize: 20 }}></i>} label="Received" {...a11yProps(0)} />
+        <Tab icon={<i class="ni ni-send" style={{ fontSize: 20 }}></i>} label="Send" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        {props.pending}
+        {props.received}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {props.allowed}
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        {props.rejected}
+        {props.send}
       </TabPanel>
     </Paper>
   );

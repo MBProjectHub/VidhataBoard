@@ -46,7 +46,7 @@ var routes = [
   },
   {
     path: "/notifications",
-    name: "Custom Notifications",
+    name: "Notifications",
     icon: "ni ni-bell-55 text-yellow",
     component: Notifications,
     layout: "/admin"

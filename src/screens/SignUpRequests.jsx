@@ -29,18 +29,20 @@ import {
 } from "reactstrap";
 // core components
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
-import IconLabelTabs from "components/IconLabelTabs.js";
-
-var pending = ['lenovo.com','apple.com','companyX.co.in'];
-var allowed = [['airasia.com','John Doe'], ['bigbazaar.com','Jack Sams'], ['teachindia.org','John Doe'], ['agame.com','Rubert']];
-var rejected = [['gmail.com','Rubert'], ['qindustries.uk','Jack Sams']];
+import SignUpTabs from "components/SignUpTabs.js";
 
 class SignUpRequests extends React.Component {
+
+  state = {
+    pending : ['lenovo.com','apple.com','companyX.co.in'],
+    allowed : [{ domain: 'airasia.com', by: 'John Doe', charge: ""}, { domain: 'bigbazaar.com', by: 'Jack Sams', charge: ""}, { domain: 'teachindia.org', by: 'John Doe', charge: ""}, { domain: 'agame.com', by: 'Rubert', charge: ""}],
+    rejected : [{ domain: 'gmail.com', by: 'Rubert'}, { domain: 'qindustries.uk', by: 'Jack Sams'}]
+  }
 
   getPending() {
     var items = [];
 
-    for(var i=0; i<pending.length; i++)
+    for(var i=0; i<this.state.pending.length; i++)
     {
       items.push(
         <tr>
@@ -48,7 +50,7 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {pending[i]}
+                  {this.state.pending[i]}
                 </span>
               </Media>
             </Media>
@@ -70,10 +72,16 @@ class SignUpRequests extends React.Component {
     return items;
   }
 
+  setAmount(e) {
+    var temp = this.state.allowed;
+    temp[e.target.getAttribute("id")].charge = e.target.value;
+    this.setState({ allowed: temp });
+  }
+
   getAllowed() {
     var items = [];
 
-    for(var i=0; i<allowed.length; i++)
+    for(var i=0; i<this.state.allowed.length; i++)
     {
       items.push(
         <tr>
@@ -81,13 +89,21 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {allowed[i][0]}
+                  {this.state.allowed[i].domain}
                 </span>
               </Media>
             </Media>
           </th>
           <td>
-            {allowed[i][1]}
+            {this.state.allowed[i].by}
+          </td>
+          <td>
+          <div class="input-group input-group-alternative mb-4" style={{ marginTop: 20, marginLeft: '15%', width: '70%' }}>
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="ni ni-money-coins"></i></span>
+            </div>
+            <input id={i} class="form-control form-control-alternative" placeholder="Amount" type="text" value={this.state.allowed[i].charge} onChange={e => this.setAmount(e)} />
+          </div>
           </td>
           <td>
             <button type="button" class="btn btn-danger">Move To Rejected</button>
@@ -102,7 +118,7 @@ class SignUpRequests extends React.Component {
   getRejected() {
     var items = [];
 
-    for(var i=0; i<rejected.length; i++)
+    for(var i=0; i<this.state.rejected.length; i++)
     {
       items.push(
         <tr>
@@ -110,13 +126,13 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {rejected[i][0]}
+                  {this.state.rejected[i].domain}
                 </span>
               </Media>
             </Media>
           </th>
           <td>
-            {rejected[i][1]}
+            {this.state.rejected[i].by}
           </td>
           <td>
             <button type="button" class="btn btn-success">Move To Allowed</button>
@@ -179,6 +195,7 @@ allowedTable() {
               <tr>
                 <th scope="col">Domain</th>
                 <th scope="col">By</th>
+                <th scope="col"><span style={{ marginLeft: '15%' }}>Handling Charges</span></th>
                 <th scope="col">Action</th>
                 <th scope="col" />
               </tr>
@@ -237,7 +254,7 @@ rejectedTable() {
         {/* Page content */}
         <Container className="mt--7" fluid>
           <Card>
-            <IconLabelTabs pending={this.pendingTable()} allowed={this.allowedTable()} rejected={this.rejectedTable()} />
+            <SignUpTabs pending={this.pendingTable()} allowed={this.allowedTable()} rejected={this.rejectedTable()} />
           </Card>
         </Container>
       </>
