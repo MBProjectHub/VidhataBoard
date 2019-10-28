@@ -21,6 +21,8 @@ import GenerateBill from "screens/GenerateBill.jsx";
 import Notifications from "screens/Notifications.jsx";
 import Analytics from "screens/Analytics.jsx";
 import Profile from "screens/Profile.jsx";
+import Register from "views/examples/Register.jsx";
+import Login from "views/examples/Login.jsx";
 
 var routes = [
   {
@@ -64,6 +66,20 @@ var routes = [
     icon: "ni ni-single-02 text-info",
     component: Profile,
     layout: "/admin"
+  },
+  {
+    path: "/login",
+    name: "Login",
+    icon: "ni ni-key-25 text-info",
+    component: Login,
+    layout: "/auth"
+  },
+  {
+    path: "/register",
+    name: "Register",
+    icon: "ni ni-circle-08 text-pink",
+    component: Register,
+    layout: "/auth"
   }
 ];
 export default routes;

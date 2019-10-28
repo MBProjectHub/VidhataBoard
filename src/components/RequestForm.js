@@ -14,7 +14,7 @@ import {
   Col
 } from "reactstrap";
 
-const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl="8">
+const Requestform = (props)=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl="8">
               <Card className="bg-secondary shadow">
                 <CardHeader className="bg-white border-0">
                   <Row className="align-items-center">
@@ -54,6 +54,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-username"
                               placeholder="Username"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -70,6 +71,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-email"
                               placeholder="jesse@example.com"
                               type="email"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -89,6 +91,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-first-name"
                               placeholder="First name"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -106,6 +109,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-last-name"
                               placeholder="Last name"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -132,6 +136,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-address"
                               placeholder="Home Address"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -151,6 +156,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-city"
                               placeholder="City"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -168,6 +174,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-country"
                               placeholder="Country"
                               type="text"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -184,6 +191,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                               id="input-postal-code"
                               placeholder="Postal code"
                               type="number"
+                              style={{pointerEvents:!props.editable?'none':'auto'}}
                             />
                           </FormGroup>
                         </Col>
@@ -202,6 +210,7 @@ const Requestform = ()=><Col style={{maxWidth:'100%'}} className="order-xl-1" xl
                           defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
                           Open Source."
                           type="textarea"
+                          style={{pointerEvents:!props.editable?'none':'auto'}}
                         />
                       </FormGroup>
                     </div>

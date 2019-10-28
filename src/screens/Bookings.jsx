@@ -25,8 +25,9 @@ import {
   Row
 } from "reactstrap";
 // core components
-import Header from "components/Headers/Header.jsx";
+import Header from "../components/Headers/EmptyHeader.jsx";
 import Messenger from "components/Messenger";
+import AnalyticsHeader from '../components/Headers/AnalyticsHeader'
 
 class Bookings extends React.Component {
   render() {
@@ -34,8 +35,10 @@ class Bookings extends React.Component {
       <>
         <Header />
         {/* Page content */}
-        
-        <Container className="mt--7" fluid>
+        <div className="bg-gradient-info pb-8 pt-5 pt-md-8" style={{position:'absolute', marginTop:'10%', top:'70%', width:'100%'}}>
+        <AnalyticsHeader />
+        </div>
+        <Container className="mt--7 "  fluid>
           {/* Table */}
           <Row>
             <div className="col">
@@ -49,6 +52,7 @@ class Bookings extends React.Component {
           </Row>
           
         </Container>
+        
       </>
     );
   }
