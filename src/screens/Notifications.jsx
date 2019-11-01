@@ -33,6 +33,7 @@ import {
 // core components
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
 import NotifTabs from "components/NotifTabs.js";
+import ConversationSearch from '../components/ConversationSearch'
 
 class Notifications extends React.Component {
 
@@ -138,6 +139,7 @@ class Notifications extends React.Component {
           <Card className="shadow">
             <CardHeader className="border-0">
               <h3 className="mb-0">Your Notifications</h3>
+              <ConversationSearch placeholder="Search Notifications"/>
             </CardHeader>
               <table class="table align-items-center">
                 <thead class="thead-light">

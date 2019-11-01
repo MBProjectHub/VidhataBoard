@@ -250,7 +250,7 @@ export default class Messenger extends React.Component {
        
         <div className="scrollable sidebar" style={{height:'100%'}}>
         <div className="conversation-list">
-          <ConversationSearch />
+          <ConversationSearch placeholder="Search Bookings"/>
           {
             this.state.conversations.map(conversation =>
               <div id={conversation.name} className="conversation-list-item"  

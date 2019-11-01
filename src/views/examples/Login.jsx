@@ -89,7 +89,6 @@ class Login extends React.Component {
                     <Input placeholder="Passcode" />
                   </InputGroup>
                 </FormGroup>
-                
                 <FormGroup className="mb-3">
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">

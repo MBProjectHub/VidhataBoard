@@ -45,14 +45,6 @@ class AdminNavbar extends React.Component {
       searchVisibility = "visible"
     return <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto" style={{visibility:searchVisibility}}>
               <FormGroup >
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="fas fa-search" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input placeholder="Search" type="text" />
-                </InputGroup>
               </FormGroup>
             </Form>
   }
