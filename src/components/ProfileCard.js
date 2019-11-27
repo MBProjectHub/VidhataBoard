@@ -15,30 +15,33 @@ class ProfileCard extends React.Component {
   render() {
     return (
       <>
-        <div style={{ width: "20rem" }}>
+        <div style={{ width: '100%', marginTop: 10 }}>
           <Card className="card-stats mb-4 mb-lg-0" style={{backgroundColor:'#FAFAFA', borderColor:'#FAFAFA'}}>
             <CardBody style={{padding:5}}>
               <Row>
-              <Col className="col-auto">
+                <Col className="col-auto">
                   <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
                     <i className="fas fa-chart-bar" />
                   </div>
                 </Col>
+
                 <div className="col">
-                <span style={{color:'#272727'}} className="h2 font-weight-bold mb-0">{this.props.employee}</span>
-                  <CardTitle className="text-uppercase text-muted mb-0">
+                  <span style={{color:'#272727'}} className="h3 font-weight-bold mb-0">{this.props.employee}</span>
+                  <CardTitle className="text-uppercase text-muted mb-0" style={{ fontSize: 13 }}>
                   {this.props.company}
                   </CardTitle>
-                  
                 </div>
-                
+
+                <div style={{ marginLeft: 20 }}>
+                  <p className="mt-3 mb-0 text-muted text-sm">
+                    <span className="text-success mr-2">
+                      9:30
+                    </span>
+                    <span style={{color:'#272727'}} className="text-nowrap">Handled by Josh</span>
+                  </p>
+                </div>
+
               </Row>
-              <p className="mt-3 mb-0 text-muted text-sm">
-                <span className="text-success mr-2">
-                  9:30
-                </span>
-                <span style={{color:'#272727'}} className="text-nowrap">Handled by Josh</span>
-              </p>
             </CardBody>
           </Card>
         </div>
