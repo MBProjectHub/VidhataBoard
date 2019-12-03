@@ -215,43 +215,49 @@ export default class Messenger extends React.Component {
   {
     if(this.state.currentSelected!=="")
     {
-      return <div style={{width:'100%',height: window.innerHeight, position:'relative'}}>
+      return <div style={{width:'100%',height: window.innerHeight*0.9, position:'relative'}}>
       <Container style={{padding:0}}>
         <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0}}>
           <Col>
-          <ProfileCard company={this.state.currentConversation.text} employee={this.state.currentConversation.name} />
+          <ProfileCard company={this.state.currentConversation.text} employee={this.state.currentConversation.name}/>
           </Col>
           <Col>
-          <div>
+          <div> 
           {this.renderProgressBar()}
           </div>
           </Col>
-        </Row>
-        </Container>
+        </Row> 
+        </Container> 
 
         {this.loadContent(this.state.currentConversation)}
-    </div>
 
+        <div  style={{position:'absolute' ,bottom :0 , width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
+        <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'20%'}}>
+          Handle Request
+        </Button>          
+        </div>
+    </div>
+      
     }
   }
 
   render()
   {
-
+    
     console.log(this.state.cardOptions)
     return (
-      <div className="messenger" style={{flex : 1}}>
-
-        <div className="scrollable sidebar" style={{height: window.innerHeight}}>
+      <div className="messenger" style={{height: window.innerHeight*0.9, width:'100%'}}>
+       
+        <div className="scrollable sidebar" style={{height:'100%', width:'25%'}}>
         <div className="conversation-list">
           <ConversationSearch placeholder="Search Bookings"/>
           {
             this.state.conversations.map(conversation =>
-              <div id={conversation.name} className="conversation-list-item"
+              <div id={conversation.name} className="conversation-list-item"  
                 onClick={this.ClickRequest.bind(this, conversation)}
                 onMouseOver = {this.MouseOverRequest.bind(this,conversation)}
                 onMouseOut = {this.MouseOutRequest.bind(this,conversation)}>
-
+                
                 <img className="conversation-photo" src={conversation.photo} alt="conversation" />
                 <div className="conversation-info">
                   <h1 className="conversation-title">{ conversation.name }</h1>
@@ -264,11 +270,7 @@ export default class Messenger extends React.Component {
         </div>
         </div>
           {this.loadStage()}
-          <div  style={{position:'absolute', top: '100%', width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
-            <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'20%'}}>
-              Handle Request
-            </Button>
-          </div>
+
       </div>
     );
   }
