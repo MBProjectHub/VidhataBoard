@@ -36,8 +36,8 @@ class Bookings extends React.Component {
         <EmptyHeader />
         {/* Page content */}
         <div className="bg-gradient-info pb-8 pt-5 pt-md-8" style={{position:'absolute', marginTop:'10%', top:'70%', width:'100%'}}>
-        <div style={{ height: 50 }} />
-        <AnalyticsHeader />
+        <div style={{ height: 0 }} />
+          <AnalyticsHeader />
         </div>
         <Container className="mt--7 "  fluid>
           {/* Table */}

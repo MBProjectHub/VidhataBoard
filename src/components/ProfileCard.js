@@ -29,15 +29,15 @@ class ProfileCard extends React.Component {
                   <CardTitle className="text-uppercase text-muted mb-0">
                   {this.props.company}
                   </CardTitle>
-                  
+
                 </div>
-                
+
               </Row>
               <p className="mt-3 mb-0 text-muted text-sm">
                 <span className="text-success mr-2">
                   9:30
                 </span>
-                <span style={{color:'#272727'}} className="text-nowrap">Handled by Josh</span>
+                <span style={{color:'#272727'}} className="text-nowrap">Handled by {this.props.handler}</span>
               </p>
             </CardBody>
           </Card>

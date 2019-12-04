@@ -18,9 +18,11 @@ import '../ConversationList.css';
 import '../ConversationListItem.css';
 import ProfileCard from '../ProfileCard'
 import RequestForm from '../RequestForm'
+import fire from '../../config/firebaseConfig';
 
 export default class Messenger extends React.Component {
   state = {
+    bookings: {},
     conversations:[
       {name: "Romário da Rosa",
       photo: "https://randomuser.me/api/portraits/men/67.jpg",
@@ -70,6 +72,46 @@ export default class Messenger extends React.Component {
     cardOptions:[]
 
     }
+
+  componentDidMount() {
+    fire.database().ref('/bookings').on('value', snapshot => {
+      this.setState({ bookings: snapshot.val() }, () => this.loadConvos());
+    });
+  }
+
+  trans(stage) {
+    switch(stage)
+    {
+      case 0: return 'request';
+      case 1: return 'options';
+      case 2: return 'request';
+      default: return '';
+    }
+  }
+
+  async loadConvos() {
+    let uids = Object.keys(this.state.bookings);
+    let tempConvos = [];
+    for(var i=0; i < uids.length; i++)
+    {
+      let threads = Object.keys(this.state.bookings[uids[i]].active)
+      for(var j=0; j < threads.length; j++)
+      {
+        let st = this.state.bookings[uids[i]].active[threads[j]].stage;
+        let h = this.state.bookings[uids[i]].active[threads[j]][this.trans(st)].handler;
+        await fire.database().ref('/users/'+uids[i]).once('value', snapshot => {
+          tempConvos.push({
+            photo: "https://randomuser.me/api/portraits/men/54.jpg",
+            name: snapshot.val().name,
+            text: snapshot.val().company,
+            stage: st,
+            handler: h
+          })
+        });
+      }
+    }
+    this.setState({ conversations: tempConvos });
+  }
 
   ClickRequest(conversation)
   {
@@ -134,7 +176,6 @@ export default class Messenger extends React.Component {
 
   renderBookingOptions()
   {
-    console.log('sdsd')
     return this.state.cardOptions.map(cards=>{
       return cards
     })
@@ -215,49 +256,47 @@ export default class Messenger extends React.Component {
   {
     if(this.state.currentSelected!=="")
     {
-      return <div style={{width:'100%',height: window.innerHeight*0.9, position:'relative'}}>
+      return <div style={{width:'100%',height: window.innerHeight, position:'relative'}}>
       <Container style={{padding:0}}>
-        <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0}}>
+        <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10}}>
           <Col>
-          <ProfileCard company={this.state.currentConversation.text} employee={this.state.currentConversation.name}/>
+          <ProfileCard company={this.state.currentConversation.text} employee={this.state.currentConversation.name} handler={this.state.currentConversation.handler} />
           </Col>
           <Col>
-          <div> 
+          <div>
           {this.renderProgressBar()}
           </div>
           </Col>
-        </Row> 
-        </Container> 
+        </Row>
+        </Container>
 
         {this.loadContent(this.state.currentConversation)}
 
         <div  style={{position:'absolute' ,bottom :0 , width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
         <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'20%'}}>
           Handle Request
-        </Button>          
+        </Button>
         </div>
     </div>
-      
+
     }
   }
 
   render()
   {
-    
-    console.log(this.state.cardOptions)
     return (
-      <div className="messenger" style={{height: window.innerHeight*0.9, width:'100%'}}>
-       
-        <div className="scrollable sidebar" style={{height:'100%', width:'25%'}}>
+      <div className="messenger" style={{height: window.innerHeight, width:'100%'}}>
+
+        <div className="scrollable sidebar" style={{height: window.innerHeight, width:'25%'}}>
         <div className="conversation-list">
           <ConversationSearch placeholder="Search Bookings"/>
           {
             this.state.conversations.map(conversation =>
-              <div id={conversation.name} className="conversation-list-item"  
+              <div id={conversation.name} className="conversation-list-item"
                 onClick={this.ClickRequest.bind(this, conversation)}
                 onMouseOver = {this.MouseOverRequest.bind(this,conversation)}
                 onMouseOut = {this.MouseOutRequest.bind(this,conversation)}>
-                
+
                 <img className="conversation-photo" src={conversation.photo} alt="conversation" />
                 <div className="conversation-info">
                   <h1 className="conversation-title">{ conversation.name }</h1>
