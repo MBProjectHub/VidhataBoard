@@ -25,19 +25,24 @@ class ProfileCard extends React.Component {
                   </div>
                 </Col>
                 <div className="col">
-                <span style={{color:'#272727'}} className="h2 font-weight-bold mb-0">{this.props.employee}</span>
+                <span style={{color:'#272727'}} className="h2 font-weight-bold mb-0">{this.props.data.name}</span>
                   <CardTitle className="text-uppercase text-muted mb-0">
-                  {this.props.company}
+                  {this.props.data.text}
                   </CardTitle>
 
                 </div>
 
               </Row>
               <p className="mt-3 mb-0 text-muted text-sm">
+              <span className="text-success mr-2">
+                {this.props.data.arrivedAt}
+              </span>
+              <span style={{color:'#272727'}} className="text-nowrap">Received</span>
+                <br/>
                 <span className="text-success mr-2">
-                  9:30
+                  {this.props.data.handledAt}
                 </span>
-                <span style={{color:'#272727'}} className="text-nowrap">Handled by {this.props.handler}</span>
+                <span style={{color:'#272727'}} className="text-nowrap">Handled by {this.props.data.handler}</span>
               </p>
             </CardBody>
           </Card>

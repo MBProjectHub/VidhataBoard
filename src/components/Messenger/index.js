@@ -90,25 +90,26 @@ export default class Messenger extends React.Component {
   }
 
   async loadConvos() {
-    let uids = Object.keys(this.state.bookings);
+    let threads = Object.keys(this.state.bookings.active)
     let tempConvos = [];
-    for(var i=0; i < uids.length; i++)
+    for(var i=0; i < threads.length; i++)
     {
-      let threads = Object.keys(this.state.bookings[uids[i]].active)
-      for(var j=0; j < threads.length; j++)
-      {
-        let st = this.state.bookings[uids[i]].active[threads[j]].stage;
-        let h = this.state.bookings[uids[i]].active[threads[j]][this.trans(st)].handler;
-        await fire.database().ref('/users/'+uids[i]).once('value', snapshot => {
+        let uid = this.state.bookings.active[threads[i]].uid;
+        let st = this.state.bookings.active[threads[i]].stage;
+        let h = this.state.bookings.active[threads[i]][this.trans(st)].handler;
+        let ha = this.state.bookings.active[threads[i]][this.trans(st)].handledAt;
+        let a = this.state.bookings.active[threads[i]][this.trans(st)].arrivedAt;
+        await fire.database().ref('/users/'+uid).once('value', snapshot => {
           tempConvos.push({
             photo: "https://randomuser.me/api/portraits/men/54.jpg",
             name: snapshot.val().name,
             text: snapshot.val().company,
             stage: st,
-            handler: h
+            handler: h,
+            handledAt: ha,
+            arrivedAt: a
           })
         });
-      }
     }
     this.setState({ conversations: tempConvos });
   }
@@ -260,7 +261,7 @@ export default class Messenger extends React.Component {
       <Container style={{padding:0}}>
         <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10}}>
           <Col>
-          <ProfileCard company={this.state.currentConversation.text} employee={this.state.currentConversation.name} handler={this.state.currentConversation.handler} />
+          <ProfileCard data={this.state.currentConversation} />
           </Col>
           <Col>
           <div>
