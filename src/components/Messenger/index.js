@@ -18,54 +18,13 @@ import '../ConversationList.css';
 import '../ConversationListItem.css';
 import ProfileCard from '../ProfileCard'
 import RequestForm from '../RequestForm'
+import ConfirmationForm from '../ConfirmationForm'
 import fire from '../../config/firebaseConfig';
 
 export default class Messenger extends React.Component {
   state = {
     bookings: {},
-    conversations:[
-      {name: "Romário da Rosa",
-      photo: "https://randomuser.me/api/portraits/men/67.jpg",
-      text: "Google",
-      stage: 0},
-      {photo: "https://randomuser.me/api/portraits/women/24.jpg",
-      name: "Sonia Pearson",
-      text: "Facebook",
-      stage: 0},
-      {photo: "https://randomuser.me/api/portraits/men/72.jpg",
-      name: "Tim West",
-      text: "Amazon",
-      stage: 1},
-      {photo: "https://randomuser.me/api/portraits/men/69.jpg",
-      name: "Luke Clarke",
-      text: "Lenovo",
-      stage: 1},
-      {photo: "https://randomuser.me/api/portraits/men/54.jpg",
-      name: "Gordon Chambers",
-      text: "Redmi",
-      stage: 2},
-      {name: "Romário da1 Rosa",
-      photo: "https://randomuser.me/api/portraits/men/67.jpg",
-      text: "Google",
-      stage: 2},
-      {photo: "https://randomuser.me/api/portraits/women/24.jpg",
-      name: "Sonia1 Pearson",
-      text: "Facebook",
-      stage: 3},
-      {photo: "https://randomuser.me/api/portraits/men/72.jpg",
-      name: "Tim1 West",
-      text: "Amazon",
-      stage: 3},
-      {photo: "https://randomuser.me/api/portraits/men/69.jpg",
-      name: "Luke1 Clarke",
-      text: "Lenovo",
-      stage: 0},
-      {photo: "https://randomuser.me/api/portraits/men/54.jpg",
-      name: "Gordon1 Chambers",
-      text: "Redmi",
-      stage: 2}
-    ],
-
+    conversations:[],
     currentProgressStage:"",
     currentSelected:"",
     currentConversation:{},
@@ -94,13 +53,15 @@ export default class Messenger extends React.Component {
     let tempConvos = [];
     for(var i=0; i < threads.length; i++)
     {
-        let uid = this.state.bookings.active[threads[i]].uid;
-        let st = this.state.bookings.active[threads[i]].stage;
-        let h = this.state.bookings.active[threads[i]][this.trans(st)].handler;
-        let ha = this.state.bookings.active[threads[i]][this.trans(st)].handledAt;
-        let a = this.state.bookings.active[threads[i]][this.trans(st)].arrivedAt;
+        let tid = threads[i];
+        let uid = this.state.bookings.active[tid].uid;
+        let st = this.state.bookings.active[tid].stage;
+        let h = this.state.bookings.active[tid][this.trans(st)].handler;
+        let ha = this.state.bookings.active[tid][this.trans(st)].handledAt;
+        let a = this.state.bookings.active[tid][this.trans(st)].arrivedAt;
         await fire.database().ref('/users/'+uid).once('value', snapshot => {
           tempConvos.push({
+            threadId: tid,
             photo: "https://randomuser.me/api/portraits/men/54.jpg",
             name: snapshot.val().name,
             text: snapshot.val().company,
@@ -195,7 +156,7 @@ export default class Messenger extends React.Component {
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-      <RequestForm editable={false}/>
+      <RequestForm editable={true} data={this.state.currentConversation} />
     </div>
     }
     else if(conversation.stage == 1)
@@ -240,11 +201,7 @@ export default class Messenger extends React.Component {
     else
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-
-
-      <RequestForm editable={true}/>
-
-
+        <ConfirmationForm editable={true}/>
       <div style={{width:'80%',marginLeft:'8%', marginTop:"5%"}}>
       <StyledDropZone onDrop={(file, text) => console.log(file, text)} />
       </div>
@@ -274,7 +231,7 @@ export default class Messenger extends React.Component {
         {this.loadContent(this.state.currentConversation)}
 
         <div  style={{position:'absolute' ,bottom :0 , width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
-        <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'20%'}}>
+        <Button color="primary" type="button" style={{position:'absolute',right:'5%', bottom:'10%'}}>
           Handle Request
         </Button>
         </div>
