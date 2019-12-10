@@ -249,8 +249,8 @@ export default class Messenger extends React.Component {
     if(this.state.currentSelected!=="")
     {
       return <div style={{width:'100%',height: window.innerHeight, position:'relative'}}>
-      <Container style={{padding:0}}>
-        <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10}}>
+      <Container style={{padding:0, zIndex: 10}}>
+        <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10 }}>
           <Col>
           <ProfileCard data={this.state.currentConversation} />
           </Col>
@@ -262,7 +262,7 @@ export default class Messenger extends React.Component {
         </Row>
       </Container>
 
-      {this.state.cover?<div style={{ position: 'absolute', width: '100%', height: '100%', bottom: 0, background: '#79B9E1', zIndex: 10, opacity: 0.5 }} /> : ''}
+      {this.state.cover?<div style={{ position: 'absolute', width: '100%', height: '79%', bottom: 0, background: '#79B9E1', zIndex: 5, opacity: 0.5 }} /> : ''}
       {this.loadContent(this.state.currentConversation)}
 
       <div  style={{position:'absolute', zIndex: 10, bottom :0 , width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>
