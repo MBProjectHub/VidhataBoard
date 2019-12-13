@@ -27,7 +27,7 @@ class Options extends React.Component {
     fire.database().ref(
       '/bookings/active/'+this.props.data.threadId+'/options').on(
         'value', snapshot => {
-          if(snapshot.val() != '-')
+          if(snapshot.val() != '-' && snapshot.val())
           {
             var temp = snapshot.val();
             if(!temp.opts)
@@ -41,28 +41,51 @@ class Options extends React.Component {
       )
   }
 
-  send() {
-    let temp = this.state.data;
+  getTimestamp(h,m) {
+    var t = new Date();
+    t.setHours(t.getUTCHours() + h);
+    t.setMinutes(t.getUTCMinutes() + m);
 
-    for(var i=0; i < temp.opts.length; i++)
-    {
-      if(!temp.opts[i].dept)
-        temp.opts[i]['dept'] = this.props.data.bookings.active[this.props.data.threadId].request.details.dept;
-      if(!temp.opts[i].arr)
-        temp.opts[i]['arr'] = this.props.data.bookings.active[this.props.data.threadId].request.details.arr;
-      if(!temp.opts[i].date)
-        temp.opts[i]['date'] = this.props.data.bookings.active[this.props.data.threadId].request.details.ddate;
-    }
-    fire.database().ref(
-      '/bookings/active/'+this.props.data.threadId+'/options')
-      .update(temp);
+    var timestamp =
+        t.getUTCFullYear() + "_" +
+        ("0" + (t.getMonth()+1)).slice(-2) + "_" +
+        ("0" + t.getDate()).slice(-2) + "_" +
+        ("0" + t.getHours()).slice(-2) + "_" +
+        ("0" + t.getMinutes()).slice(-2) + "_" +
+        ("0" + t.getSeconds()).slice(-2) + "_" +
+        ("0" + t.getMilliseconds()).slice(-2);
+
+    return timestamp;
   }
 
-  renderBookingOptions()
-  {
-    return this.state.cardOptions.map(cards=>{
-      return cards
-    })
+  send() {
+    this.props.load();
+    let data = this.state.data;
+
+    for(var i=0; i < data.opts.length; i++)
+    {
+      if(!data.opts[i].dept)
+        data.opts[i]['dept'] = this.props.data.bookings.active[this.props.data.threadId].request.details.dept;
+      if(!data.opts[i].arr)
+        data.opts[i]['arr'] = this.props.data.bookings.active[this.props.data.threadId].request.details.arr;
+      if(!data.opts[i].date)
+        data.opts[i]['date'] = this.props.data.bookings.active[this.props.data.threadId].request.details.ddate;
+    }
+
+    fire.database().ref('/bookings/active/'+this.props.data.threadId).once('value', async snapshot => {
+      let newData = snapshot.val();
+      newData.Ustage = 1;
+      newData.options = data;
+      let timestamp = this.getTimestamp(5,30);
+      let temp = timestamp.split('_');
+      let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
+      newData.options.arrivedAt = formatted;
+      temp = {}
+      temp['booking_'+timestamp] = newData;
+      await fire.database().ref('/bookings/active/'+this.props.data.threadId).set({});
+      await fire.database().ref('bookings/active').update(temp);
+      this.props.updateId('booking_'+timestamp);
+    });
   }
 
   cardStatus(cardId) {
@@ -126,14 +149,12 @@ class Options extends React.Component {
           </div>
           <div style={{display:'flex', flexDirection:'row',alignItems:'center', marginTop:'3%'}}>
             <Input id={i} style={{width:'50%', marginRight:'5%'}} label='From' placeholder='Departure City'
-                onChange={e => { opts[e.target.getAttribute('id')]['dept'] = e.target.value }}
-                value={this.state.data.opts[i].dept}
-                defaultValue={this.props.data.bookings.active[this.props.data.threadId].request.details.dept}
+                onChange={e => { opts[e.target.getAttribute('id')]['dept'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].dept?this.state.data.opts[i].dept:this.props.data.bookings.active[this.props.data.threadId].request.details.dept}
               />
             <Input id={i} style={{width:'50%'}} label='To' placeholder='Arrival City'
-              onChange={e => { opts[e.target.getAttribute('id')]['arr'] = e.target.value }}
-              value={this.state.data.opts[i].arr}
-              defaultValue={this.props.data.bookings.active[this.props.data.threadId].request.details.arr}
+              onChange={e => { opts[e.target.getAttribute('id')]['arr'] = e.target.value; this.forceUpdate(); }}
+              defaultValue={this.state.data.opts[i].arr?this.state.data.opts[i].arr:this.props.data.bookings.active[this.props.data.threadId].request.details.arr}
             />
           </div>
           <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginTop:'3%'}}>
@@ -143,9 +164,8 @@ class Options extends React.Component {
                   <InputGroupText style={{ backgroundColor: '#E7E7E7', color: '#5c5c5c', fontWeight: 700 }}>Date</InputGroupText>
                 </InputGroupAddon>
                 <TextInput id={i} style={{width: 100, marginBottom: '3%', color: 'black', paddingLeft: 15}} placeholder='  Date'
-                  onChange={e => { opts[e.target.getAttribute('id')]['date'] = e.target.value }} type='date'
-                  value={this.state.data.opts[i].date}
-                  defaultValue={this.props.data.bookings.active[this.props.data.threadId].request.details.ddate}
+                  onChange={e => { opts[e.target.getAttribute('id')]['date'] = e.target.value; this.forceUpdate(); }} type='date'
+                  defaultValue={this.state.data.opts[i].date?this.state.data.opts[i].date:this.props.data.bookings.active[this.props.data.threadId].request.details.ddate}
                 />
               </InputGroup>
               <InputGroup>
@@ -153,19 +173,19 @@ class Options extends React.Component {
                   <InputGroupText style={{ backgroundColor: '#E7E7E7', color: '#5c5c5c', fontWeight: 700 }}>Time</InputGroupText>
                 </InputGroupAddon>
                 <TextInput id={i} style={{width: 100, marginBottom: '3%', color: 'black', paddingLeft: 15}} placeholder='  Time'
-                  onChange={e => { opts[e.target.getAttribute('id')]['time'] = e.target.value }} type='time'
-                  value={this.state.data.opts[i].time}
+                  onChange={e => { opts[e.target.getAttribute('id')]['time'] = e.target.value; this.forceUpdate(); }} type='time'
+                  defaultValue={this.state.data.opts[i].time}
                 />
               </InputGroup>
               <Input id={i} style={{width:'100%', marginBottom: '3%'}} label='Fare' placeholder='Price'
-                onChange={e => { opts[e.target.getAttribute('id')]['fare'] = e.target.value }}
-                value={this.state.data.opts[i].fare}
+                onChange={e => { opts[e.target.getAttribute('id')]['fare'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].fare}
               />
             </div>
             <div style={{alignSelf: 'flex-start', width: '50%', marginTop:'3%'}}>
-              <textarea id={i} class="form-control" rows="3" placeholder="Remarks" style={{ marginTop: '3%' }}
-                onChange={e => { opts[e.target.getAttribute('id')]['remarks'] = e.target.value }}
-                value={this.state.data.opts[i].remarks}
+              <textarea id={i} class="form-control" rows="3" placeholder="Remarks" style={{ marginTop: '3%', color: 'black' }}
+                onChange={e => { opts[e.target.getAttribute('id')]['remarks'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].remarks}
               />
               {this.cardStatus(i)}
             </div>
@@ -186,7 +206,8 @@ class Options extends React.Component {
   render() {
     return(
       <div style={{height:'75%', marginBottom:'2%',paddingLeft:'7%', paddingTop:'4%', paddingBottom:'4%', overflowY:'scroll', width:'100%',backgroundColor:'#f8f9fe'}}>
-        {this.renderBookingOptions()}
+        {console.log(this.state.data)}
+        {this.state.cardOptions.map(card => card )}
         <a class="ui card" onClick={() => this.addOption(this.state.cardOptions, this.state.cardOptions.length, true)}  style={{border:'2px dashed rgb(94, 114, 228)', background:'#5e72e450', width:'90%', height:'25%', boxShadow:'0 5px 9px 0 #d4d4d5, 0 0 0 1px #d4d4d5'}}>
           <div class="content" style={{display:'flex',alignItems:'center', justifyContent:'center',}}>
             <img src={require('../assets/img/icons/common/plus.png')} style={{width:50, height:50}}/>

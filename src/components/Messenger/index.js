@@ -46,6 +46,7 @@ export default class Messenger extends React.Component {
       case 0: return 'request';
       case 1: return 'options';
       case 2: return 'confirmation';
+      case 3: return 'confirmation';
       default: return '';
     }
   }
@@ -85,8 +86,8 @@ export default class Messenger extends React.Component {
           await fire.database().ref('/users/'+uid).once('value', snapshot => {
             tempConvos.unshift({
               threadId: tid,
-              photo: "https://randomuser.me/api/portraits/men/54.jpg",
               name: snapshot.val().name,
+              comp: snapshot.val().company,
               text: dept + ' > ' + arr,
               stage: st,
               handler: h,
@@ -94,15 +95,13 @@ export default class Messenger extends React.Component {
               arrivedAt: a
             })
           });
-          if(tid == this.state.currentConversation.threadId)
+          if(tid == this.state.currentSelected)
             tempCur = tempConvos[0];
         }
     }
-    console.log(tempCur.stage)
     if(Object.keys(tempCur).length != 0) {
       if(this.state.bookings.active[tempCur.threadId][this.trans(tempCur.stage)].handler == 'uid2') //fire.auth().currentUser.uid
       {
-        console.log('hey')
         this.setState({
           conversations: tempConvos,
           currentSelected: tempCur.threadId,
@@ -167,13 +166,20 @@ export default class Messenger extends React.Component {
     let steps = ['Initiate Request', 'Flight Options', 'Booking Confirmation', 'Booking Complete'];
 
     if(label == steps[0]) {
-      fire.database().ref('/bookings/active/'+this.state.currentConversation.threadId).update({ Estage: 0 });
+      fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 0 });
       if(this.state.currentProgressStage != 0)
         this.setState({ loading: true });
-    }
-    else if(label == steps[1] && !this.state.cover) {
-      fire.database().ref('/bookings/active/'+this.state.currentConversation.threadId).update({ Estage: 1 });
+    } else if(label == steps[1] && (!this.state.cover || this.state.currentProgressStage == 2)) {
+      fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 1 });
       if(this.state.currentProgressStage != 1)
+        this.setState({ loading: true });
+    } else if(label == steps[2] && this.state.bookings.active[this.state.currentSelected].options.status != 0) {
+      fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 2 });
+      if(this.state.currentProgressStage != 2)
+        this.setState({ loading: true });
+    } else if(label == steps[3] && this.state.bookings.active[this.state.currentSelected].Ustage == 3) {
+      fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 3 });
+      if(this.state.currentProgressStage != 3)
         this.setState({ loading: true });
     }
   }
@@ -207,7 +213,7 @@ export default class Messenger extends React.Component {
         <Stepper style={{height:100, padding:10, backgroundColor:'transparent'}} alternativeLabel activeStep={this.state.currentProgressStage}>
       {steps.map(label => (
         <Step  key={label}>
-        <StepLabel label={{color:'#fff'}} style={{color:'#fff'}} onClick={() => this.stageClick(label)}>
+        <StepLabel label={{color:'#fff'}} style={{color:'#fff', cursor:'pointer'}} onClick={() => this.stageClick(label)}>
           {label}
         </StepLabel>
         </Step>
@@ -222,15 +228,15 @@ export default class Messenger extends React.Component {
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-      <RequestForm editable={true} data={this.state.currentConversation} />
+      <RequestForm editable={false} data={this.state.currentConversation} />
     </div>
     }
     else if(conversation.stage == 1)
-      return <Options data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
+      return <Options load={() => this.setState({ loading: true })} updateId={id => this.setState({ currentSelected: id })} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     else
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-        <ConfirmationForm editable={true} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
+        <ConfirmationForm load={() => this.setState({ loading: true })} updateId={id => this.setState({ currentSelected: id })} editable={true} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     </div>
     }
   }
@@ -239,7 +245,7 @@ export default class Messenger extends React.Component {
     let timestamp = this.getTimestamp(5,30);
     let temp = timestamp.split('_');
     let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
-    fire.database().ref('/bookings/active/'+this.state.currentConversation.threadId+'/'+this.trans(this.state.currentProgressStage))
+    fire.database().ref('/bookings/active/'+this.state.currentSelected+'/'+this.trans(this.state.currentProgressStage))
     .update({ handledAt: formatted, handler: 'uid2' }); //fire.auth().currentUser.uid
     this.setState({ cover: false });
   }

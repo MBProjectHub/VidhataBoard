@@ -31,7 +31,7 @@ class Requestform extends React.Component {
     fire.database().ref(
       '/bookings/active/'+this.props.data.threadId+'/request/details').on(
         'value', snapshot => {
-          if(snapshot.val() != '-')
+          if(snapshot.val() != '-' && snapshot.val())
             this.setState(snapshot.val());
         }
       )

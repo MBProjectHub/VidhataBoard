@@ -37,7 +37,7 @@ class ConfirmationForm extends React.Component {
     fire.database().ref(
       '/bookings/active/'+this.props.data.threadId+'/confirmation/details').on(
         'value', snapshot => {
-          if(snapshot.val() != '-')
+          if(snapshot.val() != '-' && snapshot.val())
             this.setState(snapshot.val());
           else
             this.setState({
@@ -50,9 +50,39 @@ class ConfirmationForm extends React.Component {
       )
   }
 
+  getTimestamp(h,m) {
+    var t = new Date();
+    t.setHours(t.getUTCHours() + h);
+    t.setMinutes(t.getUTCMinutes() + m);
+
+    var timestamp =
+        t.getUTCFullYear() + "_" +
+        ("0" + (t.getMonth()+1)).slice(-2) + "_" +
+        ("0" + t.getDate()).slice(-2) + "_" +
+        ("0" + t.getHours()).slice(-2) + "_" +
+        ("0" + t.getMinutes()).slice(-2) + "_" +
+        ("0" + t.getSeconds()).slice(-2) + "_" +
+        ("0" + t.getMilliseconds()).slice(-2);
+
+    return timestamp;
+  }
+
   send() {
-    fire.database().ref(
-      '/bookings/active/'+this.props.data.threadId+'/confirmation/details').update(this.state);
+    this.props.load();
+    fire.database().ref('/bookings/active/'+this.props.data.threadId).once('value', async snapshot => {
+      let newData = snapshot.val();
+      newData.Ustage = 2;
+      newData.confirmation.details = this.state;
+      let timestamp = this.getTimestamp(5,30);
+      let temp = timestamp.split('_');
+      let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
+      newData.confirmation.arrivedAt = formatted;
+      temp = {}
+      temp['booking_'+timestamp] = newData;
+      await fire.database().ref('/bookings/active/'+this.props.data.threadId).set({});
+      await fire.database().ref('bookings/active').update(temp);
+      this.props.updateId('booking_'+timestamp);
+    });
   }
 
   render() {
