@@ -24,7 +24,8 @@ class Requestform extends React.Component {
     ttype: 0,
     class: 0,
     numTrav: 1,
-    travNames: []
+    travNames: [],
+    travNums: []
   }
 
   componentDidMount() {
@@ -39,19 +40,54 @@ class Requestform extends React.Component {
     for(var i=0; i < num; i++)
     {
       fields.push(
-        <Input
-          className="form-control-alternative"
-          id={i}
-          placeholder="Traveller Name"
-          type="text"
-          value={this.state.travNames[i]}
-          onChange={name => {
-            let temp = this.state.travNames;
-            temp[Number(name.target.getAttribute("id"))] = name.target.value;
-            this.setState({ travNames: temp });
-          }}
-          style={{pointerEvents:!this.props.editable?'none':'auto', marginTop: '2%'}}
-        />
+        <Row>
+          <Col lg="6">
+            <FormGroup>
+              <label
+                className="form-control-label"
+                htmlFor="input-username"
+              >
+                Name
+              </label>
+              <Input
+                className="form-control-alternative"
+                id={i}
+                placeholder="Traveller Name"
+                type="text"
+                value={this.state.travNames[i]}
+                onChange={name => {
+                  let temp = this.state.travNames;
+                  temp[Number(name.target.getAttribute("id"))] = name.target.value;
+                  this.setState({ travNames: temp });
+                }}
+                style={{pointerEvents:!this.props.editable?'none':'auto', marginTop: '2%'}}
+              />
+              </FormGroup>
+            </Col>
+            <Col lg="6">
+              <FormGroup>
+              <label
+                className="form-control-label"
+                htmlFor="input-username"
+              >
+                Number
+              </label>
+              <Input
+                className="form-control-alternative"
+                id={i}
+                placeholder="Traveller Number"
+                type="number"
+                value={this.state.travNums[i]}
+                onChange={name => {
+                  let temp = this.state.travNums;
+                  temp[Number(name.target.getAttribute("id"))] = name.target.value;
+                  this.setState({ travNums: temp });
+                }}
+                style={{pointerEvents:!this.props.editable?'none':'auto', marginTop: '2%'}}
+              />
+              </FormGroup>
+            </Col>
+        </Row>
       );
     }
 
@@ -64,7 +100,7 @@ class Requestform extends React.Component {
                 className="form-control-label"
                 htmlFor="input-city"
               >
-                Names of additional Travellers
+                Additional Traveller Details
               </label>
               {fields.map(field => field )}
             </FormGroup>
@@ -241,6 +277,8 @@ class Requestform extends React.Component {
                           </FormGroup>
                         </Col>
                       </Row>
+                    </div>
+                    <div className="pl-lg-4">
                       {this.getNameFields(this.state.numTrav-1)}
                     </div>
                     <hr className="my-4" />

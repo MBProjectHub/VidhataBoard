@@ -68,19 +68,25 @@ class Options extends React.Component {
         data.opts[i]['date'] = this.props.data.bookings.active[this.props.data.threadId].request.details.ddate;
     }
 
-    fire.database().ref('/bookings/active/'+this.props.data.threadId).once('value', async snapshot => {
-      let newData = snapshot.val();
+    fire.database().ref('/users').once('value', async snapshot => {
+      /*let newData = this.props.data.bookings.active[this.props.data.threadId];
       newData.Ustage = 1;
       newData.options = data;
       let timestamp = this.getTimestamp(5,30);
       let temp = timestamp.split('_');
       let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
       newData.options.arrivedAt = formatted;
-      temp = {}
-      temp['booking_'+timestamp] = newData;
-      await fire.database().ref('/bookings/active/'+this.props.data.threadId).set({});
-      await fire.database().ref('bookings/active').update(temp);
-      this.props.updateId('booking_'+timestamp);
+
+      temp = {bookings: this.props.data.bookings, users: snapshot.val()}
+
+      temp.users[newData.uid].bookings[this.props.data.threadId] = {}
+      temp.users[newData.uid].bookings['booking_'+timestamp] = '-';
+
+      temp.bookings.active[this.props.data.threadId] = {};
+      temp.bookings.active['booking_'+timestamp] = newData;
+
+      await fire.database().ref('/').update(temp);
+      this.props.updateId('booking_'+timestamp);*/
     });
   }
 
@@ -203,7 +209,6 @@ class Options extends React.Component {
   render() {
     return(
       <div style={{height:'75%', marginBottom:'2%',paddingLeft:'7%', paddingTop:'4%', paddingBottom:'4%', overflowY:'scroll', width:'100%',backgroundColor:'#f8f9fe'}}>
-        {console.log(this.state.data)}
         {this.state.cardOptions.map(card => card )}
         <a class="ui card" onClick={() => this.addOption(this.state.cardOptions, this.state.cardOptions.length, true)}  style={{border:'2px dashed rgb(94, 114, 228)', background:'#5e72e450', width:'90%', height:'25%', boxShadow:'0 5px 9px 0 #d4d4d5, 0 0 0 1px #d4d4d5'}}>
           <div class="content" style={{display:'flex',alignItems:'center', justifyContent:'center',}}>
