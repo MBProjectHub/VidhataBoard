@@ -87,7 +87,7 @@ export default class Messenger extends React.Component {
             tempConvos.unshift({
               threadId: tid,
               name: snapshot.val().name,
-              comp: snapshot.val().company,
+              department: snapshot.val().department,
               text: dept + ' > ' + arr,
               stage: st,
               handler: h,
@@ -100,7 +100,7 @@ export default class Messenger extends React.Component {
         }
     }
     if(Object.keys(tempCur).length != 0) {
-      if(this.state.bookings.active[tempCur.threadId][this.trans(tempCur.stage)].handler == 'uid2') //fire.auth().currentUser.uid
+      if(this.state.bookings.active[tempCur.threadId][this.trans(tempCur.stage)].handler == fire.auth().currentUser.uid)
       {
         this.setState({
           conversations: tempConvos,
@@ -134,7 +134,7 @@ export default class Messenger extends React.Component {
       document.getElementById(conversation.threadId).style.background = "#fff"
       });
       document.getElementById(conversation.threadId).style.background = "#eeeef1"
-      if(this.state.bookings.active[conversation.threadId][this.trans(this.state.bookings.active[conversation.threadId].Estage)].handler == 'uid2') //fire.auth().currentUser.uid
+      if(this.state.bookings.active[conversation.threadId][this.trans(this.state.bookings.active[conversation.threadId].Estage)].handler == fire.auth().currentUser.uid)
         this.setState({
           currentSelected:conversation.threadId,
           currentProgressStage:conversation.stage,
@@ -228,7 +228,7 @@ export default class Messenger extends React.Component {
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-      <RequestForm editable={false} data={this.state.currentConversation} />
+      <RequestForm editable={false} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     </div>
     }
     else if(conversation.stage == 1)
@@ -246,7 +246,7 @@ export default class Messenger extends React.Component {
     let temp = timestamp.split('_');
     let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
     fire.database().ref('/bookings/active/'+this.state.currentSelected+'/'+this.trans(this.state.currentProgressStage))
-    .update({ handledAt: formatted, handler: 'uid2' }); //fire.auth().currentUser.uid
+    .update({ handledAt: formatted, handler: fire.auth().currentUser.uid });
     this.setState({ cover: false });
   }
 

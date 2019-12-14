@@ -24,21 +24,17 @@ class Options extends React.Component {
   }
 
   componentDidMount() {
-    fire.database().ref(
-      '/bookings/active/'+this.props.data.threadId+'/options').on(
-        'value', snapshot => {
-          if(snapshot.val() != '-' && snapshot.val())
-          {
-            var temp = snapshot.val();
-            if(!temp.opts)
-              temp['opts'] = [];
-            this.setState({ data: temp, cardOptions: [] }, () => {
-              for(var i=0; i < this.state.data.opts.length; i++)
-                this.addOption(this.state.cardOptions, i, false);
-            });
-          }
-        }
-      )
+    let temp = this.props.data.bookings.active[this.props.data.threadId];
+    if(temp && temp.options != '-')
+    {
+        var data = temp.options;
+        if(!data.opts)
+          data['opts'] = [];
+        this.setState({ data: data, cardOptions: [] }, () => {
+          for(var i=0; i < this.state.data.opts.length; i++)
+            this.addOption(this.state.cardOptions, i, false);
+        });
+    }
   }
 
   getTimestamp(h,m) {
@@ -183,6 +179,7 @@ class Options extends React.Component {
               />
             </div>
             <div style={{alignSelf: 'flex-start', width: '50%', marginTop:'3%'}}>
+              <span style={{ fontSize: 12, fontWeight: 600 }}>Remarks</span>
               <textarea id={i} class="form-control" rows="3" placeholder="Remarks" style={{ marginTop: '3%', color: 'black' }}
                 onChange={e => { opts[e.target.getAttribute('id')]['remarks'] = e.target.value; this.forceUpdate(); }}
                 defaultValue={this.state.data.opts[i].remarks}
