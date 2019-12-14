@@ -30,20 +30,123 @@ import {
   Table,
   Media
 } from "reactstrap";
+
+// RCE CSS
+import 'react-chat-elements/dist/main.css';
+// MessageBox component
+import { MessageBox } from 'react-chat-elements';
+import '../assets/css/Notifications.css'
+import fire from '../config/firebaseConfig';
 // core components
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
 import NotifTabs from "components/NotifTabs.js";
 import ConversationSearch from '../components/ConversationSearch'
 
+
+
+import { Button as SemButton, Header, Icon, Image, Modal, Form, TextArea, Label, Loader, Dimmer } from 'semantic-ui-react'
+
 class Notifications extends React.Component {
 
   state = {
-    notifs: [
-      { from: 'Michael', subject: 'Passport Expiry', timestamp: '26/10/2019 - 15:44'},
-      { from: 'Clark', subject: 'Booking Update', timestamp: '23/09/2019 - 7:25'},
-      { from: 'Ruby', subject: 'Passport Expiry', timestamp: '07/09/2019 - 2:17'},
-      { from: 'Fredrick', subject: 'Payment Verification', timestamp: '15/08/2019 - 12:59'}
-  ]
+    notifs: [],
+   currentModalConvos: [],
+   open: false,
+   currentSubject:'',
+   currentFrom:'',
+    currentToken:'',
+    notifications:{}
+  }
+
+  
+  componentDidMount()
+  {
+    this.retrieveFirebaseData()
+  }
+
+
+  retrieveFirebaseData()
+  {
+    
+    let notifications = {}
+    let notifications_arr = []
+    fire.database().ref('notifications/').once('value', (notifs)=>{
+      //notifications = notifs.val()
+      notifs.forEach(notification=>{
+          notifications_arr.push({token:notification.key, sentByname: notification.val().name, subject: notification.val().subject, timestamp:notification.val().timestamp})
+      })
+      this.setState({notifs: notifications_arr})
+    })
+  
+  }
+  
+  leftPad(number, targetLength) {
+    var output = number + '';
+    while (output.length < targetLength) {
+        output = '0' + output;
+    }
+    return output;
+}
+
+sendNotification()
+  {
+    let subject = document.getElementById('notify_sub').value
+    let message = document.getElementById('notify_msg').value
+    let recieverId = document.getElementById('exampleFormControlInput1').value
+
+    if(subject === "" || message === "" ||recieverId === ""  )
+    {
+      alert('Please enter all the fields')
+      return;
+    }
+    else
+    {
+      let currentDate = new Date();
+    let date = this.leftPad(currentDate.getDate(),2)
+    let month = this.leftPad(currentDate.getMonth()+1,2) 
+    let year = currentDate.getFullYear();
+    let hour = this.leftPad(currentDate.getHours(),2)
+    let mins = this.leftPad(currentDate.getMinutes(),2)
+    let secs = this.leftPad(currentDate.getSeconds(),2)
+
+
+    let DateString = ""+year+month+date+hour+mins+secs
+    let conversation = {}
+  
+    let firstConvo = "convo_"+DateString
+    conversation[firstConvo] = {customer:true,
+      message: message,
+      time: ""+ date + "-"+month+"-"+year+" "+hour+":"+mins} 
+
+      fire.database().ref(`users/${fire.auth().currentUser.uid}/name`).on('value',(name)=>{
+        fire.database().ref(`notifications/notify_${DateString}/`).set(
+          {
+          conversation: conversation,
+          subject: subject,
+          senyByuid: fire.auth().currentUser.uid,
+          timestamp: ""+date+"/"+month+"/"+year+" "+hour+":"+mins,
+          sentByname: name.val()
+        },()=>{
+          fire.database().ref(`users/${fire.auth().currentUser.uid}/notifications/notify_${DateString}/`).set(
+            {
+            conversation: conversation,
+            subject: subject,
+            senyByuid: fire.auth().currentUser.uid,
+            timestamp: ""+date+"/"+month+"/"+year+" "+hour+":"+mins,
+            sentByname: "Bhargav" //TODO
+          })
+        }
+        )
+      })
+
+    
+
+    document.getElementById("notify_sub").value = ""
+    document.getElementById("notify_msg").value = ""
+    document.getElementById("exampleFormControlInput1").value = ""
+    
+    this.retrieveFirebaseData()
+    }
   }
 
   send() {
@@ -64,15 +167,15 @@ class Notifications extends React.Component {
                 </div>
                 <div class="col">
                   <div class="form-group">
-                    <input type="email" class="form-control form-control-alternative" style={{ width: '100%' }} id="exampleFormControlInput1" placeholder="Receiver Email"/>
+                    <input  type="email" class="form-control form-control-alternative" style={{ width: '100%' }} id="exampleFormControlInput1" placeholder="Receiver Email"/>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                 <form style={{ marginBottom: 20 }}>
-                  <input class="form-control form-control-alternative" placeholder="Subject" type="text" style={{ marginBottom: 20 }} />
-                  <textarea class="form-control form-control-alternative" rows="10" placeholder="Enter Custom Notification..."></textarea>
+                  <input id="notify_sub" class="form-control form-control-alternative" placeholder="Subject" type="text" style={{ marginBottom: 20 }} />
+                  <textarea id="notify_msg" class="form-control form-control-alternative" rows="10" placeholder="Enter Custom Notification..."></textarea>
                 </form>
                 </div>
               </div>
@@ -89,7 +192,7 @@ class Notifications extends React.Component {
                 <div class="col">
                   <InputGroup >
                     <InputGroupAddon addonType="prepend" style={{width: '50%'}} >
-                      <Button style={{paddingLeft:'20%', paddingRight:'20%'}}  block color="info" size="lg"  type="button">Schedule Send</Button>
+                      <Button onClick={this.sendNotification.bind(this)} style={{paddingLeft:'20%', paddingRight:'20%'}}  block color="info" size="lg"  type="button">Schedule Send</Button>
                     </InputGroupAddon>
                     <Input placeholder="dd/mm/yyyy" style={{paddingLeft:'10%',height: 51}}/>
                   </InputGroup>
@@ -102,15 +205,114 @@ class Notifications extends React.Component {
     );
   }
 
+  
+  sendMessage()
+  {
+    let text = document.getElementById('messageBox').value
+    let uid = fire.auth().currentUser.uid;
+    let token = this.state.currentToken
+    let currentDate = new Date();
+    let date = this.leftPad(currentDate.getDate(),2)
+    let month = this.leftPad(currentDate.getMonth()+1,2) 
+    let year = currentDate.getFullYear();
+    let hour = this.leftPad(currentDate.getHours(),2)
+    let mins = this.leftPad(currentDate.getMinutes(),2)
+    let secs = this.leftPad(currentDate.getSeconds(),2)
+
+    console.log(Date.now())
+
+    let DateString = ""+year+month+date+hour+mins+secs
+
+    fire.database().ref(`notifications/${token}/conversation/convo_${DateString}/`).set({
+      customer:true,
+      message: text,
+      time: ""+ date + "-"+month+"-"+year+" "+hour+":"+mins
+    })
+
+    document.getElementById("messageBox").value = ""
+    
+    console.log(text, uid, DateString)
+  }
+  
+  close = () => this.setState({ open: false })
+
+  ChatModal(){
+    let subject = this.state.currentSubject
+    let from = this.state.currentFrom
+    return(
+    <Modal style={{height:'fit-content', top:'10%', left:'20%'}} open={this.state.open} onClose={this.close.bind(this)}>
+     <div style={{display:'flex', flexDirection:'row', height:'fit-content'}}>
+      <Modal.Header className="ModalHeader">{subject}</Modal.Header>
+      <p className="SenderDetails">{from}</p>
+      </div>
+      <Modal.Content className="ModalContent" style={{minHeight:window.innerHeight*(0.6)}} scrolling>
+
+        <Modal.Description> 
+
+
+          {this.state.currentModalConvos.map((value, index, array)=> {
+            if(typeof value === 'object')
+            return <MessageBox
+            position={value.customer?'right':'left'}
+            type={'text'}
+            text={value.message}
+            dateString={value.time.slice(11)}
+            />
+
+            else
+            return <Label style={{marginLeft:'47%', backgroundColor:'#fff9c4'}} primary  pointing>
+            {value}
+          </Label>
+          })
+          }
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions style={{display: 'flex',
+                            justifyContent: 'space-between'}}>
+      <Form style={{width:window.innerWidth*0.4}}>
+        <TextArea id="messageBox" placeholder='Type a message' rows={2}/>
+      </Form>
+        <SemButton id="reply" onClick={this.sendMessage.bind(this)} primary>
+          Reply <Icon name='chevron right' />
+        </SemButton>
+      </Modal.Actions>
+    </Modal>
+    )
+  }
+
+  openChatModal(subject, from, token)
+  {
+    
+    let conversations = []
+    let prevDate = ""
+    fire.database().ref('notifications').on('value',(convos)=>{
+      conversations = []
+
+      Object.values(convos.val()[token]['conversation']).map((val)=>{
+        
+        if(val.time.slice(0,3)!=prevDate)
+        {
+          prevDate = val.time.slice(0,3)
+          conversations.push(val.time.slice(0,5))
+        }
+        conversations.push(val)
+      })
+      this.setState({currentModalConvos: conversations, open:true, currentSubject: subject, currentFrom: from, currentToken: token}) 
+    }) 
+    console.log(conversations)
+
+    
+  }
+
   getReceived() {
     var items = [];
 
-    for(var i=0; i<this.state.notifs.length; i++)
+    for(var i=this.state.notifs.length-1; i>=0; i--)
     {
       items.push(
         <tr>
           <td>
-            {this.state.notifs[i].from}
+            {this.state.notifs[i].name}
           </td>
           <th scope="row" class="name">
             <div class="media align-items-center">
@@ -123,13 +325,25 @@ class Notifications extends React.Component {
             {this.state.notifs[i].timestamp}
           </td>
           <td>
-            <button type="button" class="btn btn-success">Open</button>
+            <button type="button" class="btn btn-success" 
+            onClick={this.openChatModal.bind(this, this.state.notifs[i].subject,this.state.notifs[i].name,this.state.notifs[i].token)}>Open</button>
+            
           </td>
         </tr>
       );
     }
 
     return items;
+  }
+
+  loadingBar()
+  {
+    if(this.state.notifs.length === 0)
+    {
+      return <Dimmer active>
+      <Loader size='large'>Loading</Loader>
+    </Dimmer>
+    }
   }
 
   received() {
@@ -140,6 +354,7 @@ class Notifications extends React.Component {
             <CardHeader className="border-0">
               <h3 className="mb-0">Your Notifications</h3>
               <ConversationSearch placeholder="Search Notifications"/>
+              {this.loadingBar()}
             </CardHeader>
               <table class="table align-items-center">
                 <thead class="thead-light">
@@ -175,6 +390,7 @@ class Notifications extends React.Component {
         <Container className="mt--7" fluid>
           <Card>
             <NotifTabs send={this.send()} received={this.received()} />
+            {this.ChatModal()}
           </Card>
         </Container>
       </>

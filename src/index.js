@@ -28,13 +28,15 @@ import AdminLayout from "layouts/Admin.jsx";
 import AuthLayout from "layouts/Auth.jsx";
 
 
+import App from './App'
+
 
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin" render={props => <AdminLayout {...props} />} />
       <Route path="/auth" render={props => <AuthLayout {...props} />} />
-      <Redirect from="/" to="/admin/bookings" />
+      <Route path="/" render={props => <App {...props} />} />
     </Switch>
   </BrowserRouter>,
   document.getElementById("root")
