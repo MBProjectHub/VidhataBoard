@@ -31,23 +31,17 @@ class ConfirmationForm extends React.Component {
   }
 
   componentDidMount() {
-    let choice = this.props.data.bookings.active[this.props.data.threadId].options.choice;
-    selected = this.props.data.bookings.active[this.props.data.threadId].options.opts[choice];
-
-    fire.database().ref(
-      '/bookings/active/'+this.props.data.threadId+'/confirmation/details').on(
-        'value', snapshot => {
-          if(snapshot.val() != '-' && snapshot.val())
-            this.setState(snapshot.val());
-          else
-            this.setState({
-              dept: selected.dept,
-              arr: selected.arr,
-              fare: selected.fare,
-              date: selected.date
-             });
-        }
-      )
+    let temp = this.props.data.bookings.active[this.props.data.threadId];
+    let selected = temp.options.opts[temp.options.choice];
+    if(temp && temp.confirmation.details != '-')
+      this.setState(temp.confirmation.details);
+    else
+      this.setState({
+        dept: selected.dept,
+        arr: selected.arr,
+        fare: selected.fare,
+        date: selected.date
+       });
   }
 
   getTimestamp(h,m) {

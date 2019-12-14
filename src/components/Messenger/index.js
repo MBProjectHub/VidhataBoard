@@ -228,7 +228,7 @@ export default class Messenger extends React.Component {
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-      <RequestForm editable={false} data={this.state.currentConversation} />
+      <RequestForm editable={false} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     </div>
     }
     else if(conversation.stage == 1)
