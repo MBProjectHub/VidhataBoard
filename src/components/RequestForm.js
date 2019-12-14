@@ -37,6 +37,18 @@ class Requestform extends React.Component {
       )
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps != this.props) {
+      fire.database().ref(
+        '/bookings/active/'+this.props.data.threadId+'/request/details').on(
+          'value', snapshot => {
+            if(snapshot.val() != '-' && snapshot.val())
+              this.setState(snapshot.val());
+          }
+        )
+    }
+  }
+
   getNameFields(num) {
     let fields = [];
 
