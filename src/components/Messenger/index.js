@@ -175,7 +175,7 @@ export default class Messenger extends React.Component {
       fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 1 });
       if(this.state.currentProgressStage != 1)
         this.setState({ loading: true });
-    } else if(label == steps[2] && this.state.bookings.active[this.state.currentSelected].options.status != 0) {
+    } else if(label == steps[2] && this.state.bookings.active[this.state.currentSelected].options.status != 0 && this.state.bookings.active[this.state.currentSelected].options.status != 3) {
       fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 2 });
       if(this.state.currentProgressStage != 2)
         this.setState({ loading: true });

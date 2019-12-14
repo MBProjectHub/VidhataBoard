@@ -63,26 +63,24 @@ class ConfirmationForm extends React.Component {
 
   send() {
     this.props.load();
-    fire.database().ref('/users').once('value', async snapshot => {
-      let newData = this.props.data.bookings.active[this.props.data.threadId];
-      newData.Ustage = 2;
-      newData.confirmation.details = this.state;
-      let timestamp = this.getTimestamp(5,30);
-      let temp = timestamp.split('_');
-      let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
-      newData.confirmation.arrivedAt = formatted;
+    let newData = this.props.data.bookings.active[this.props.data.threadId];
+    newData.Ustage = 2;
+    newData.Estage = 2;
+    newData.confirmation.details = this.state;
+    let timestamp = this.getTimestamp(5,30);
+    let temp = timestamp.split('_');
+    let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
+    newData.confirmation.arrivedAt = formatted;
 
-      temp = {bookings: this.props.data.bookings, users: snapshot.val()}
+    temp = {};
+    temp['/users/'+newData.uid+'/bookings/'+this.props.data.threadId] = {};
+    temp['/users/'+newData.uid+'/bookings/'+'booking_'+timestamp] = '-';
 
-      temp.users[newData.uid].bookings[this.props.data.threadId] = {}
-      temp.users[newData.uid].bookings['booking_'+timestamp] = '-';
+    temp['/bookings/active/'+this.props.data.threadId] = {};
+    temp['/bookings/active/'+'booking_'+timestamp] = newData;
 
-      temp.bookings.active[this.props.data.threadId] = {};
-      temp.bookings.active['booking_'+timestamp] = newData;
-
-      await fire.database().ref('/').update(temp);
-      this.props.updateId('booking_'+timestamp);
-    });
+    fire.database().ref().update(temp);
+    this.props.updateId('booking_'+timestamp);
   }
 
   render() {

@@ -37,6 +37,24 @@ class Options extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+  if(prevProps != this.props) {
+    let temp = this.props.data.bookings.active[this.props.data.threadId];
+    if(temp && temp.options != '-')
+    {
+        var data = temp.options;
+        if(!data.opts)
+          data['opts'] = [];
+          fire.database().ref('/users/'+this.props.data.bookings.active[this.props.data.threadId].uid).once('value', snapshot => {
+            this.setState({ data: data, approver: snapshot.val().approver, cardOptions: [] }, () => {
+              for(var i=0; i < this.state.data.opts.length; i++)
+                this.addOption(this.state.cardOptions, i, false);
+            });
+          });
+    }
+  }
+}
+
   getTimestamp(h,m) {
     var t = new Date();
     t.setHours(t.getUTCHours() + h);
@@ -67,27 +85,25 @@ class Options extends React.Component {
       if(!data.opts[i].date)
         data.opts[i]['date'] = this.props.data.bookings.active[this.props.data.threadId].request.details.ddate;
     }
+    let newData = this.props.data.bookings.active[this.props.data.threadId];
+    newData.Ustage = 1;
+    newData.options.opts = data.opts;
+    newData.options.choice = data.choice;
+    newData.options.status = data.status;
+    let timestamp = this.getTimestamp(5,30);
+    let temp = timestamp.split('_');
+    let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
+    newData.options.arrivedAt = formatted;
 
-    fire.database().ref('/users').once('value', async snapshot => {
-      /*let newData = this.props.data.bookings.active[this.props.data.threadId];
-      newData.Ustage = 1;
-      newData.options = data;
-      let timestamp = this.getTimestamp(5,30);
-      let temp = timestamp.split('_');
-      let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
-      newData.options.arrivedAt = formatted;
+    temp = {};
+    temp['/users/'+newData.uid+'/bookings/'+this.props.data.threadId] = {};
+    temp['/users/'+newData.uid+'/bookings/'+'booking_'+timestamp] = '-';
 
-      temp = {bookings: this.props.data.bookings, users: snapshot.val()}
+    temp['/bookings/active/'+this.props.data.threadId] = {};
+    temp['/bookings/active/'+'booking_'+timestamp] = newData;
 
-      temp.users[newData.uid].bookings[this.props.data.threadId] = {}
-      temp.users[newData.uid].bookings['booking_'+timestamp] = '-';
-
-      temp.bookings.active[this.props.data.threadId] = {};
-      temp.bookings.active['booking_'+timestamp] = newData;
-
-      await fire.database().ref('/').update(temp);
-      this.props.updateId('booking_'+timestamp);*/
-    });
+    fire.database().ref().update(temp);
+    this.props.updateId('booking_'+timestamp);
   }
 
   cardStatus(cardId) {
@@ -182,6 +198,10 @@ class Options extends React.Component {
               <Input id={i} style={{width:'100%', marginBottom: '3%'}} label='Fare' placeholder='Price'
                 onChange={e => { opts[e.target.getAttribute('id')]['fare'] = e.target.value; this.forceUpdate(); }}
                 defaultValue={this.state.data.opts[i].fare}
+              />
+              <Input id={i} style={{width:'100%', marginBottom: '3%'}} label='Airline' placeholder='Airline'
+                onChange={e => { opts[e.target.getAttribute('id')]['airline'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].airline}
               />
             </div>
             <div style={{alignSelf: 'flex-start', width: '50%', marginTop:'3%'}}>
