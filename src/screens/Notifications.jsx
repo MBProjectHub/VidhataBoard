@@ -114,7 +114,7 @@ sendNotification()
     let conversation = {}
   
     let firstConvo = "convo_"+DateString
-    conversation[firstConvo] = {customer:true,
+    conversation[firstConvo] = {customer:false,
       message: message,
       time: ""+ date + "-"+month+"-"+year+" "+hour+":"+mins} 
 
@@ -127,7 +127,7 @@ sendNotification()
           timestamp: ""+date+"/"+month+"/"+year+" "+hour+":"+mins,
           sentByname: name.val()
         },()=>{
-          fire.database().ref(`users/${fire.auth().currentUser.uid}/notifications/notify_${DateString}/`).set(
+          fire.database().ref(`users/${recieverId}/notifications/notify_${DateString}/`).set(
             {
             conversation: conversation,
             subject: subject,
@@ -224,7 +224,7 @@ sendNotification()
     let DateString = ""+year+month+date+hour+mins+secs
 
     fire.database().ref(`notifications/${token}/conversation/convo_${DateString}/`).set({
-      customer:true,
+      customer:false,
       message: text,
       time: ""+ date + "-"+month+"-"+year+" "+hour+":"+mins
     })
@@ -253,7 +253,7 @@ sendNotification()
           {this.state.currentModalConvos.map((value, index, array)=> {
             if(typeof value === 'object')
             return <MessageBox
-            position={value.customer?'right':'left'}
+            position={value.customer?'left':'right'}
             type={'text'}
             text={value.message}
             dateString={value.time.slice(11)}
@@ -311,9 +311,6 @@ sendNotification()
     {
       items.push(
         <tr>
-          <td>
-            {this.state.notifs[i].name}
-          </td>
           <th scope="row" class="name">
             <div class="media align-items-center">
               <div class="media-body">
@@ -360,9 +357,6 @@ sendNotification()
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">
-                            From
-                        </th>
-                        <th scope="col">
                             Subject
                         </th>
                         <th scope="col">
@@ -383,6 +377,7 @@ sendNotification()
   }
 
   render() {
+    console.log(this.state.currentModalConvos)
     return (
       <>
         <EmptyHeader />
