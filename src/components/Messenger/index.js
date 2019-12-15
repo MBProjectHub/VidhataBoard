@@ -27,6 +27,7 @@ export default class Messenger extends React.Component {
   state = {
     bookings: {},
     conversations:[],
+    users: {},
     currentProgressStage:"",
     currentSelected:"",
     currentConversation:{},
@@ -35,8 +36,10 @@ export default class Messenger extends React.Component {
     }
 
   componentDidMount() {
-    fire.database().ref('/bookings').on('value', snapshot => {
-      this.setState({ bookings: snapshot.val() }, () => {this.loadConvos()});
+    fire.database().ref('/bookings').on('value', async b => {
+      await fire.database().ref('/users').on('value', u => {
+        this.setState({ bookings: b.val(), users: u.val() }, () => {this.loadConvos()});
+      });
     });
   }
 
@@ -68,7 +71,8 @@ export default class Messenger extends React.Component {
   return timestamp;
 }
 
-  async loadConvos() {
+  loadConvos() {
+    let update = true;
     let threads = [];
     if(this.state.bookings && this.state.bookings.active)
       threads = Object.keys(this.state.bookings.active);
@@ -77,6 +81,10 @@ export default class Messenger extends React.Component {
     for(var i=0; i < threads.length; i++)
     {
         let tid = threads[i];
+        if(!this.state.bookings.active[tid]) {
+          update = false;
+          break;
+        }
         if(this.state.bookings.active[tid].Estage != -1) {
           let st = this.state.bookings.active[tid].Estage;
           let uid = this.state.bookings.active[tid].uid;
@@ -85,23 +93,23 @@ export default class Messenger extends React.Component {
           let a = this.state.bookings.active[tid][this.trans(st)].arrivedAt;
           let dept = this.state.bookings.active[tid].request.details.dept;
           let arr = this.state.bookings.active[tid].request.details.arr;
-          await fire.database().ref('/users/'+uid).once('value', snapshot => {
+          if(this.state.users && this.state.users[uid]) {
             tempConvos.unshift({
               threadId: tid,
-              name: snapshot.val().name,
-              department: snapshot.val().department,
+              name: this.state.users[uid].name,
+              department: this.state.users[uid].department,
               text: dept + ' > ' + arr,
               stage: st,
               handler: h,
               handledAt: ha,
               arrivedAt: a
             })
-          });
+          }
           if(tid == this.state.currentSelected)
             tempCur = tempConvos[0];
         }
     }
-    if(Object.keys(tempCur).length != 0) {
+    if(update && Object.keys(tempCur).length != 0) {
       if(this.state.bookings.active[tempCur.threadId][this.trans(tempCur.stage)].handler == fire.auth().currentUser.uid)
       {
         this.setState({
@@ -123,7 +131,7 @@ export default class Messenger extends React.Component {
           loading: false
         })
     }
-    else
+    else if(update)
       this.setState({
         conversations: tempConvos,
         loading: false
@@ -142,14 +150,14 @@ export default class Messenger extends React.Component {
           currentProgressStage:conversation.stage,
           currentConversation: conversation,
           cover: false
-        }, () => this.loadConvos());
+        });
       else
         this.setState({
           currentSelected:conversation.threadId,
           currentProgressStage:conversation.stage,
           currentConversation: conversation,
           cover: true
-        }, () => this.loadConvos());
+        });
   }
 
   MouseOverRequest(conversation)
@@ -166,6 +174,7 @@ export default class Messenger extends React.Component {
 
   stageClick(label) {
     let steps = ['Initiate Request', 'Flight Options', 'Booking Confirmation', 'Booking Complete'];
+    let status = this.state.bookings.active[this.state.currentSelected].options.status;
 
     if(label == steps[0]) {
       fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 0 });
@@ -175,10 +184,7 @@ export default class Messenger extends React.Component {
       fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 1 });
       if(this.state.currentProgressStage != 1)
         this.setState({ loading: true });
-    } else if(label == steps[2]
-        && this.state.bookings.active[this.state.currentSelected].options.status != 0
-        && this.state.bookings.active[this.state.currentSelected].options.status != -1
-        && this.state.bookings.active[this.state.currentSelected].options.status != 3) {
+    } else if(label == steps[2] && status != 0 && status != -1 && status != 3) {
       fire.database().ref('/bookings/active/'+this.state.currentSelected).update({ Estage: 2 });
       if(this.state.currentProgressStage != 2)
         this.setState({ loading: true });
