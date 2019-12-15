@@ -35,9 +35,10 @@ import {
 
 import fire from 'firebase'
 
+import CircularProgress from '@material-ui/core/CircularProgress';
 class Login extends React.Component {
 
-
+  state = {loading:false}
 
   firebaseLogin()
   {
@@ -50,15 +51,30 @@ class Login extends React.Component {
       .then(()=>{
         this.props.history.push('/admin/bookings')
         console.log(fire.auth().currentUser.uid)
+      }).catch(()=>{
+        this.setState({loading:false})
+        alert('Wrong credentials')
       })
     }
     else
     {
+      this.setState({loading:false})
       alert("Please enter all the details");
     }
   }
 
-  
+ 
+  renderLoader()
+  {
+    if(this.state.loading)
+    return <CircularProgress />
+   
+    else
+   return <Button className="mt-4" color="primary" type="button" onClick={()=>{this.setState({loading:true},this.firebaseLogin.bind(this)) }}>
+   Create account
+ </Button>
+    
+  }
 
 
   render() {
@@ -101,9 +117,10 @@ class Login extends React.Component {
                 </FormGroup>
                
               </Form>
+              {this.renderLoader()}
             </CardBody>
           </Card>
-         
+
         </Col>
       </>
     );
