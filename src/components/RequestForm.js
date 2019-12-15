@@ -122,6 +122,51 @@ class Requestform extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form>
+                    {/* Address */}
+                    <h6 className="heading-small text-muted mb-4">
+                      Flight Preferences
+                    </h6>
+                    <div className="pl-lg-4">
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-city"
+                            >
+                              Trip type
+                            </label>
+                            <div class="custom-control custom-radio mb-3">
+                              <input name="custom-radio-2" class="custom-control-input" id="customRadio5" type="radio" checked={this.state.ttype==1} onChange={() => this.setState({ ttype: 1 })} />
+                              <label class="custom-control-label" for="customRadio5">One Way</label>
+                            </div>
+                            <div class="custom-control custom-radio mb-3">
+                              <input name="custom-radio-2" class="custom-control-input" id="customRadio6" type="radio" checked={this.state.ttype==2} onChange={() => this.setState({ ttype: 2 })} />
+                              <label class="custom-control-label" for="customRadio6">Round Trip</label>
+                            </div>
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-country"
+                            >
+                              Class
+                            </label>
+                            <div class="custom-control custom-radio mb-3">
+                              <input name="custom-radio-3" class="custom-control-input" id="customRadio7" type="radio" checked={this.state.class==1} onChange={() => this.setState({ class: 1 })} />
+                              <label class="custom-control-label" for="customRadio7">Business</label>
+                            </div>
+                            <div class="custom-control custom-radio mb-3">
+                              <input name="custom-radio-3" class="custom-control-input" id="customRadio8" type="radio" checked={this.state.class==2} onChange={() => this.setState({ class: 2 })} />
+                              <label class="custom-control-label" for="customRadio8">Economy</label>
+                            </div>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </div>
+                    <hr className="my-4" />
                     <h6 className="heading-small text-muted mb-4">
                       Trip Details
                     </h6>
@@ -203,51 +248,6 @@ class Requestform extends React.Component {
                               onChange={rdate => this.setState({ rdate: rdate.target.value })}
                               style={{pointerEvents:!this.props.editable?'none':'auto'}}
                             />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </div>
-                    <hr className="my-4" />
-                    {/* Address */}
-                    <h6 className="heading-small text-muted mb-4">
-                      Flight Preferences
-                    </h6>
-                    <div className="pl-lg-4">
-                      <Row>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-city"
-                            >
-                              Trip type
-                            </label>
-                            <div class="custom-control custom-radio mb-3">
-                              <input name="custom-radio-2" class="custom-control-input" id="customRadio5" type="radio" checked={this.state.ttype==1} onChange={() => this.setState({ ttype: 1 })} />
-                              <label class="custom-control-label" for="customRadio5">One Way</label>
-                            </div>
-                            <div class="custom-control custom-radio mb-3">
-                              <input name="custom-radio-2" class="custom-control-input" id="customRadio6" type="radio" checked={this.state.ttype==2} onChange={() => this.setState({ ttype: 2 })} />
-                              <label class="custom-control-label" for="customRadio6">Round Trip</label>
-                            </div>
-                          </FormGroup>
-                        </Col>
-                        <Col lg="6">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-country"
-                            >
-                              Class
-                            </label>
-                            <div class="custom-control custom-radio mb-3">
-                              <input name="custom-radio-3" class="custom-control-input" id="customRadio7" type="radio" checked={this.state.class==1} onChange={() => this.setState({ class: 1 })} />
-                              <label class="custom-control-label" for="customRadio7">Business</label>
-                            </div>
-                            <div class="custom-control custom-radio mb-3">
-                              <input name="custom-radio-3" class="custom-control-input" id="customRadio8" type="radio" checked={this.state.class==2} onChange={() => this.setState({ class: 2 })} />
-                              <label class="custom-control-label" for="customRadio8">Economy</label>
-                            </div>
                           </FormGroup>
                         </Col>
                       </Row>
