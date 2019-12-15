@@ -71,7 +71,7 @@ class Login extends React.Component {
    
     else
    return <Button className="mt-4" color="primary" type="button" onClick={()=>{this.setState({loading:true},this.firebaseLogin.bind(this)) }}>
-   Create account
+   Sign In
  </Button>
     
   }
