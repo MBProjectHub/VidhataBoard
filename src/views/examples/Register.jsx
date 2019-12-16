@@ -63,7 +63,7 @@ class Register extends React.Component {
         })
       }).catch(()=>{
         this.setState({loading:false})
-        alert("Please enter all the details");
+        alert("Email already exists");
       })
     }
     else

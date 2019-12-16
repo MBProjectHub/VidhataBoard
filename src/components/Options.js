@@ -10,7 +10,7 @@ import {
   Input as TextInput
 } from "reactstrap";
 
-import { Input } from 'semantic-ui-react';
+import { Input, Message } from 'semantic-ui-react';
 
 class Options extends React.Component {
 
@@ -38,6 +38,7 @@ class Options extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log("didup")
   if(prevProps != this.props) {
     let temp = this.props.data.bookings.active[this.props.data.threadId];
     if(temp && temp.options != '-')
@@ -48,7 +49,10 @@ class Options extends React.Component {
           fire.database().ref('/users/'+this.props.data.bookings.active[this.props.data.threadId].uid).once('value', snapshot => {
             this.setState({ data: data, approver: snapshot.val().approver, cardOptions: [] }, () => {
               for(var i=0; i < this.state.data.opts.length; i++)
+              {
+                console.log(this.state.data.opts.length, this.state.cardOptions, "see'")
                 this.addOption(this.state.cardOptions, i, false);
+              }
             });
           });
     }
@@ -109,33 +113,36 @@ class Options extends React.Component {
   cardStatus(cardId) {
     if(cardId == this.state.data.choice)
     {
-      if(this.state.data.status == 1) {
-        return (
-          <div>
-            <Alert color="info" style={{ marginTop: '3%', textAlign: 'center' }}>
-              <img src={require('../assets/img/icons/common/tick.png')} style={{width:15, height:15, marginRight: 10}}/>
-              Selected Flight Option
-            </Alert>
-          </div>
-        );
-      } else if(this.state.data.status == 2) {
-        return (
-          <div>
-            <Alert color="success" style={{ marginTop: '3%', textAlign: 'center' }}>
-              <i className="fa fa-thumbs-up" style={{ marginRight: 10 }} />
-              Flight Option Approved
-            </Alert>
-          </div>
-        );
-      } else if(this.state.data.status == 3) {
-        return (
-          <div>
-            <Alert color="danger" style={{ marginTop: '3%', textAlign: 'center' }}>
-              <i className="fa fa-thumbs-down" style={{ marginRight: 10 }} />
-              Flight Option Rejected
-            </Alert>
-          </div>
-        );
+        if(this.state.data.status == 1) {
+          return (
+            <div style={{ marginTop: '3%', textAlign: 'center' }}>
+              <Message info>
+      <Message.Content>
+        <Message.Header>Selected Flight Option</Message.Header>
+      </Message.Content>
+    </Message>
+    </div>
+          );
+        } else if(this.state.data.status == 2) {
+          return (
+            <div style={{ marginTop: '3%', textAlign: 'center' }}>
+              <Message positive>
+      <Message.Content>
+        <Message.Header> Flight Option Approved</Message.Header>
+      </Message.Content>
+    </Message>
+    </div>
+          );
+        } else if(this.state.data.status == 3) {
+          return (
+            <div style={{ marginTop: '3%', textAlign: 'center' }}>
+              <Message negative>
+      <Message.Content>
+        <Message.Header> Flight Option Rejected</Message.Header>
+      </Message.Content>
+    </Message>
+    </div>
+          );
       }
     }
   }
