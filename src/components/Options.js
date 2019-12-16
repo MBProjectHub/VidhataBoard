@@ -30,9 +30,11 @@ class Options extends React.Component {
         var data = temp.options;
         if(!data.opts)
           data['opts'] = [];
-        this.setState({ data: data, cardOptions: [] }, () => {
+        this.setState({ data: data }, () => {
+          let cardOptions = [];
           for(var i=0; i < this.state.data.opts.length; i++)
-            this.addOption(this.state.cardOptions, i, false);
+            this.addOption(cardOptions, i);
+          this.setState({ cardOptions:cardOptions });
         });
     }
   }
@@ -46,9 +48,11 @@ class Options extends React.Component {
         if(!data.opts)
           data['opts'] = [];
           fire.database().ref('/users/'+this.props.data.bookings.active[this.props.data.threadId].uid).once('value', snapshot => {
-            this.setState({ data: data, approver: snapshot.val().approver, cardOptions: [] }, () => {
+            this.setState({ data: data, approver: snapshot.val().approver }, () => {
+              let cardOptions = [];
               for(var i=0; i < this.state.data.opts.length; i++)
-                this.addOption(this.state.cardOptions, i, false);
+                this.addOption(cardOptions, i);
+              this.setState({ cardOptions:cardOptions });
             });
           });
     }
@@ -143,17 +147,85 @@ class Options extends React.Component {
   delOption(cardId) {
     let temp = this.state.data;
     temp.opts.splice(cardId,1);
-    this.setState({ data: temp, cardOptions: [] }, () => {
+    this.setState({ data: temp }, () => {
+      let cardOptions = [];
       for(var i=0; i < this.state.data.opts.length; i++)
-        this.addOption(this.state.cardOptions, i, false);
+        this.addOption(cardOptions, i);
+      this.setState({ cardOptions:cardOptions });
     });
   }
 
-  addOption(arr, i, updateOpts) {
+  addOption(arr, i) {
     let cardOptions = arr;
     let opts = this.state.data.opts;
-    if(updateOpts)
-      opts.push({});
+    cardOptions.push(
+    <div>
+      <a class="ui card" style={{ background:'#fff', width:'90%', boxShadow:'0 5px 9px 0 #fafafa, 0 0 0 1px #fafafa', marginBottom:'3%'}}>
+        <div class="content">
+          <div style={{display:'flex', flexDirection:'row', alignItems:'center' }}>
+            <div class="header" style={{ marginTop: 0 }}><b>Flight Option</b></div>
+            <button id={i} class="ui negative button" onClick={e => this.delOption(e.target.getAttribute('id'))}
+              style={{ marginLeft: '70%', marginTop: 0, backgroundColor: '#ff726f', paddingTop: 6, paddingBottom: 7 }}>
+                Delete
+            </button>
+          </div>
+          <div style={{display:'flex', flexDirection:'row',alignItems:'center', marginTop:'3%'}}>
+            <Input id={i} style={{width:'50%', marginRight:'5%'}} label='From' placeholder='Departure City'
+                onChange={e => { opts[e.target.getAttribute('id')]['dept'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].dept?this.state.data.opts[i].dept:this.props.data.bookings.active[this.props.data.threadId].request.details.dept}
+              />
+            <Input id={i} style={{width:'50%'}} label='To' placeholder='Arrival City'
+              onChange={e => { opts[e.target.getAttribute('id')]['arr'] = e.target.value; this.forceUpdate(); }}
+              defaultValue={this.state.data.opts[i].arr?this.state.data.opts[i].arr:this.props.data.bookings.active[this.props.data.threadId].request.details.arr}
+            />
+          </div>
+          <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginTop:'3%'}}>
+            <div style={{alignItems:'center', width: '50%', marginTop:'3%', marginRight: '5%'}}>
+              <InputGroup>
+                <InputGroupAddon addonType="prepend" style={{ height: 40 }}>
+                  <InputGroupText style={{ backgroundColor: '#E7E7E7', color: '#5c5c5c', fontWeight: 700 }}>Date</InputGroupText>
+                </InputGroupAddon>
+                <TextInput id={i} style={{width: 100, marginBottom: '3%', color: 'black', paddingLeft: 15}} placeholder='  Date'
+                  onChange={e => { opts[e.target.getAttribute('id')]['date'] = e.target.value; this.forceUpdate(); }} type='date'
+                  defaultValue={this.state.data.opts[i].date?this.state.data.opts[i].date:this.props.data.bookings.active[this.props.data.threadId].request.details.ddate}
+                />
+              </InputGroup>
+              <InputGroup>
+                <InputGroupAddon addonType="prepend" style={{ height: 40 }}>
+                  <InputGroupText style={{ backgroundColor: '#E7E7E7', color: '#5c5c5c', fontWeight: 700 }}>Time</InputGroupText>
+                </InputGroupAddon>
+                <TextInput id={i} style={{width: 100, marginBottom: '3%', color: 'black', paddingLeft: 15}} placeholder='  Time'
+                  onChange={e => { opts[e.target.getAttribute('id')]['time'] = e.target.value; this.forceUpdate(); }} type='time'
+                  defaultValue={this.state.data.opts[i].time}
+                />
+              </InputGroup>
+              <Input id={i} style={{width:'100%', marginBottom: '3%'}} label='Fare' placeholder='Price'
+                onChange={e => { opts[e.target.getAttribute('id')]['fare'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].fare}
+              />
+              <Input id={i} style={{width:'100%', marginBottom: '3%'}} label='Airline' placeholder='Airline'
+                onChange={e => { opts[e.target.getAttribute('id')]['airline'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].airline}
+              />
+            </div>
+            <div style={{alignSelf: 'flex-start', width: '50%', marginTop:'3%'}}>
+              <span style={{ fontSize: 12, fontWeight: 600 }}>Remarks</span>
+              <textarea id={i} class="form-control" rows="3" placeholder="Remarks" style={{ marginTop: '3%', color: 'black' }}
+                onChange={e => { opts[e.target.getAttribute('id')]['remarks'] = e.target.value; this.forceUpdate(); }}
+                defaultValue={this.state.data.opts[i].remarks}
+              />
+              {this.cardStatus(i)}
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>);
+  }
+
+  addOptionWithOpts(arr, i) {
+    let cardOptions = arr;
+    let opts = this.state.data.opts;
+    opts.push({});
     cardOptions.push(
     <div>
       <a class="ui card" style={{ background:'#fff', width:'90%', boxShadow:'0 5px 9px 0 #fafafa, 0 0 0 1px #fafafa', marginBottom:'3%'}}>
@@ -217,20 +289,16 @@ class Options extends React.Component {
       </a>
     </div>);
 
-    if(updateOpts) {
-      let temp = this.state.data;
-      temp['opts'] = opts;
-      this.setState({ cardOptions:cardOptions, data: temp });
-    }
-    else
-      this.setState({ cardOptions:cardOptions });
+    let temp = this.state.data;
+    temp['opts'] = opts;
+    this.setState({ cardOptions:cardOptions, data: temp });
   }
 
   render() {
     return(
       <div style={{height:'75%', marginBottom:'2%',paddingLeft:'7%', paddingTop:'4%', paddingBottom:'4%', overflowY:'scroll', width:'100%',backgroundColor:'#f8f9fe'}}>
         {this.state.cardOptions.map(card => card )}
-        <a class="ui card" onClick={() => this.addOption(this.state.cardOptions, this.state.cardOptions.length, true)}  style={{border:'2px dashed rgb(94, 114, 228)', background:'#5e72e450', width:'90%', height:'25%', boxShadow:'0 5px 9px 0 #d4d4d5, 0 0 0 1px #d4d4d5'}}>
+        <a class="ui card" onClick={() => this.addOptionWithOpts(this.state.cardOptions, this.state.cardOptions.length)}  style={{border:'2px dashed rgb(94, 114, 228)', background:'#5e72e450', width:'90%', height:'25%', boxShadow:'0 5px 9px 0 #d4d4d5, 0 0 0 1px #d4d4d5'}}>
           <div class="content" style={{display:'flex',alignItems:'center', justifyContent:'center',}}>
             <img src={require('../assets/img/icons/common/plus.png')} style={{width:50, height:50}}/>
           </div>
