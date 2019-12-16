@@ -269,7 +269,7 @@ export default class Messenger extends React.Component {
       <Container style={{padding:0, zIndex: 10}}>
         <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10 }}>
           <Col>
-          <ProfileCard data={this.state.currentConversation} />
+          <ProfileCard data={this.state.currentConversation} name={this.state.users[this.state.currentConversation.handler].name} />
           </Col>
           <Col>
           <div>
