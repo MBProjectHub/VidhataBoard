@@ -107,7 +107,7 @@ class Options extends React.Component {
   }
 
   cardStatus(cardId) {
-    if(cardId === this.state.data.choice)
+    if(cardId == this.state.data.choice)
     {
       if(this.state.data.status == 1) {
         return (
