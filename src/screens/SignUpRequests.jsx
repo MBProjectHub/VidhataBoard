@@ -17,6 +17,8 @@
 */
 import React from "react";
 
+import fire from '../config/firebaseConfig';
+
 // reactstrap components
 import {
   Badge,
@@ -34,15 +36,51 @@ import SignUpTabs from "components/SignUpTabs.js";
 class SignUpRequests extends React.Component {
 
   state = {
-    pending : ['lenovo.com','apple.com','companyX.co.in'],
-    allowed : [{ domain: 'airasia.com', by: 'John Doe', charge: ""}, { domain: 'bigbazaar.com', by: 'Jack Sams', charge: ""}, { domain: 'teachindia.org', by: 'John Doe', charge: ""}, { domain: 'agame.com', by: 'Rubert', charge: ""}],
-    rejected : [{ domain: 'gmail.com', by: 'Rubert'}, { domain: 'qindustries.uk', by: 'Jack Sams'}]
+    pending : {},
+    allowed : {},
+    rejected : {},
+    name : ''
+  }
+
+  componentDidMount() {
+    fire.database().ref('/users/'+fire.auth().currentUser.uid).on('value', user => {
+      fire.database().ref('/signup').on('value', snapshot => {
+        this.setState({ pending: snapshot.val().pendDom, allowed: snapshot.val().apprDom, rejected: snapshot.val().rejDom, name: user.val().name })
+      });
+    });
+  }
+
+  allow(domain, pending) {
+    let temp = {};
+
+    if(pending)
+      temp['/signup/pendDom/' + domain] = {}
+    else
+      temp['/signup/rejDom/' + domain] = {}
+
+    temp['/signup/apprDom/' + domain] = { by: this.state.name, handling: 0 }
+
+    fire.database().ref().update(temp);
+  }
+
+  reject(domain, pending) {
+    let temp = {};
+
+    if(pending)
+      temp['/signup/pendDom/' + domain] = {}
+    else
+      temp['/signup/apprDom/' + domain] = {}
+
+    temp['/signup/rejDom/' + domain] = this.state.name;
+
+    fire.database().ref().update(temp);
   }
 
   getPending() {
     var items = [];
+    let pends = Object.keys(this.state.pending);
 
-    for(var i=0; i<this.state.pending.length; i++)
+    for(var i=0; i<pends.length; i++)
     {
       items.push(
         <tr>
@@ -50,20 +88,19 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {this.state.pending[i]}
+                  {pends[i].replace(/\^/g,'.')}
                 </span>
               </Media>
             </Media>
           </th>
           <td>
-            <Badge color="" className="badge-dot mr-4">
-              <i className="bg-warning" />
-              pending
-            </Badge>
+          <span className="mb-0 text-sm">
+            {this.state.pending[pends[i]]}
+          </span>
           </td>
           <td>
-            <button type="button" class="btn btn-success">Allow</button>
-            <button type="button" class="btn btn-danger">Reject</button>
+            <button type="button" class="btn btn-success" onClick={this.allow.bind(this, pends[i], true)}>Allow</button>
+            <button type="button" class="btn btn-danger" onClick={this.reject.bind(this, pends[i], true)}>Reject</button>
           </td>
         </tr>
       );
@@ -72,16 +109,11 @@ class SignUpRequests extends React.Component {
     return items;
   }
 
-  setAmount(e) {
-    var temp = this.state.allowed;
-    temp[e.target.getAttribute("id")].charge = e.target.value;
-    this.setState({ allowed: temp });
-  }
-
   getAllowed() {
     var items = [];
+    let allows = Object.keys(this.state.allowed)
 
-    for(var i=0; i<this.state.allowed.length; i++)
+    for(var i=0; i<allows.length; i++)
     {
       items.push(
         <tr>
@@ -89,24 +121,31 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {this.state.allowed[i].domain}
+                  {allows[i].replace(/\^/g,'.')}
                 </span>
               </Media>
             </Media>
           </th>
           <td>
-            {this.state.allowed[i].by}
+            {allows[i].by}
           </td>
           <td>
           <div class="input-group input-group-alternative mb-4" style={{ marginTop: 20, marginLeft: '15%', width: '70%' }}>
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="ni ni-money-coins"></i></span>
             </div>
-            <input id={i} class="form-control form-control-alternative" placeholder="Amount" type="text" value={this.state.allowed[i].charge} onChange={e => this.setAmount(e)} />
+            <input
+              id={allows[i]}
+              class="form-control form-control-alternative"
+              placeholder="Amount"
+              type="text"
+              value={this.state.allowed[allows[i]].handling}
+              onChange={e => fire.database().ref('/signup/apprDom/'+e.target.getAttribute("id")).update({ handling: Number(e.target.value) })}
+            />
           </div>
           </td>
           <td>
-            <button type="button" class="btn btn-danger">Move To Rejected</button>
+            <button type="button" class="btn btn-danger" onClick={this.reject.bind(this, allows[i], false)}>Move To Rejected</button>
           </td>
         </tr>
       );
@@ -117,8 +156,9 @@ class SignUpRequests extends React.Component {
 
   getRejected() {
     var items = [];
+    let rejs = Object.keys(this.state.rejected)
 
-    for(var i=0; i<this.state.rejected.length; i++)
+    for(var i=0; i<rejs.length; i++)
     {
       items.push(
         <tr>
@@ -126,16 +166,16 @@ class SignUpRequests extends React.Component {
             <Media className="align-items-center">
               <Media>
                 <span className="mb-0 text-sm">
-                  {this.state.rejected[i].domain}
+                  {rejs[i].replace(/\^/g,'.')}
                 </span>
               </Media>
             </Media>
           </th>
           <td>
-            {this.state.rejected[i].by}
+            {this.state.rejected[rejs[i]]}
           </td>
           <td>
-            <button type="button" class="btn btn-success">Move To Allowed</button>
+            <button type="button" class="btn btn-success" onClick={this.allow.bind(this, rejs[i], false)}>Move To Allowed</button>
           </td>
         </tr>
       );
@@ -160,9 +200,8 @@ class SignUpRequests extends React.Component {
 
                 <tr>
                   <th scope="col">Domain</th>
-                  <th scope="col">By</th>
+                  <th scope="col">#Requests</th>
                   <th scope="col">Action</th>
-                  <th scope="col" />
                 </tr>
               </thead>
 
@@ -195,9 +234,8 @@ allowedTable() {
               <tr>
                 <th scope="col">Domain</th>
                 <th scope="col">By</th>
-                <th scope="col"><span style={{ marginLeft: '15%' }}>Handling Charges</span></th>
+                <th scope="col"><span style={{ marginLeft: '15%' }}>Handling Charge</span></th>
                 <th scope="col">Action</th>
-                <th scope="col" />
               </tr>
             </thead>
 
@@ -231,7 +269,6 @@ rejectedTable() {
                 <th scope="col">Domain</th>
                 <th scope="col">By</th>
                 <th scope="col">Action</th>
-                <th scope="col" />
               </tr>
             </thead>
 
