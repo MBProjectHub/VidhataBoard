@@ -62,7 +62,6 @@ var routes = [
     layout: "/admin"
   },
   {
-<<<<<<< HEAD
     path: "/profile",
     name: "Profile",
     icon: "ni ni-single-02 text-info",
@@ -77,8 +76,6 @@ var routes = [
     layout: "/admin"
   },
   {
-=======
->>>>>>> 8edc94accadeea28298afc779e64cb85296c0c86
     path: "/login",
     name: "Login",
     icon: "ni ni-key-25 text-info",
