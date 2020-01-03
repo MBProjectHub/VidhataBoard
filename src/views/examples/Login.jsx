@@ -74,11 +74,6 @@ else
 
   }
 
-     else
-    return <Button className="my-4" color="primary" type="button" onClick={()=>{this.setState({loading:true}, this.firebaseLogin.bind(this))}}>
-    Sign in
-  </Button>
-  }
 
   render() {
     return (
@@ -118,11 +113,7 @@ else
                     <Input id="password" placeholder="Password" type="password" />
                   </InputGroup>
                 </FormGroup>
-                <div className="text-center">
 
-                  {this.renderLoader()}
-
-                </div>
               </Form>
               {this.renderLoader()}
             </CardBody>
@@ -133,5 +124,4 @@ else
     );
   }
 }
-
 export default Login;
