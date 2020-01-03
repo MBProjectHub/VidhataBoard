@@ -36,10 +36,11 @@ import {
 
 import { Route, Switch } from "react-router-dom";
 
+import CircularProgress from '@material-ui/core/CircularProgress';
 import fire from '../../config/firebaseConfig'
 
 class Register extends React.Component {
-
+ state = {loading:false}
   firebaseRegister()
   {
     let passcode = document.getElementById('passcode').value;
@@ -56,17 +57,33 @@ class Register extends React.Component {
           name: name,
           email: email,
           admin: true
+        }, ()=>{
+          this.props.history.push('/admin/bookings')
+          this.setState({loading:false})
         })
-      }, ()=>{
-        this.props.history.push('/admin/bookings')
+      }).catch(()=>{
+        this.setState({loading:false})
+        alert("Email already exists");
       })
     }
     else
     {
+      this.setState({loading:false})
       alert("Please enter all the details");
     }
   }
 
+  renderLoader()
+  {
+    if(this.state.loading)
+    return <CircularProgress />
+   
+    else
+   return <Button className="mt-4" color="primary" type="button" onClick={()=>{this.setState({loading:true},this.firebaseRegister.bind(this)) }}>
+   Create account
+ </Button>
+    
+  }
   render() {
     return (
       <>
@@ -153,10 +170,8 @@ class Register extends React.Component {
                   </Form>
               
                 <div className="text-center">
-                  <Button className="mt-4" color="primary" type="button" onClick={this.firebaseRegister.bind(this)}>
-                    Create account
-                  </Button>
-                </div>
+                    {this.renderLoader()}
+                </div>  
             </CardBody>
           </Card>
         </Col>
