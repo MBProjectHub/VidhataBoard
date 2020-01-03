@@ -21,6 +21,7 @@ import GenerateBill from "screens/GenerateBill.jsx";
 import Notifications from "screens/Notifications.jsx";
 import Analytics from "screens/Analytics.jsx";
 import Profile from "screens/Profile.jsx";
+import ViewProfile from "screens/ViewProfile.jsx";
 import Register from "views/examples/Register.jsx";
 import Login from "views/examples/Login.jsx";
 
@@ -65,6 +66,13 @@ var routes = [
     name: "Profile",
     icon: "ni ni-single-02 text-info",
     component: Profile,
+    layout: "/admin"
+  },
+  {
+    path: "/view-profile",
+    name: "View Profile",
+    icon: "ni ni-single-02 text-info",
+    component: ViewProfile,
     layout: "/admin"
   },
   {

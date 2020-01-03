@@ -86,6 +86,7 @@ export default class Messenger extends React.Component {
           break;
         }
         if(this.state.bookings.active[tid].Estage != -1) {
+          let iid = this.state.bookings.active[tid].initId;
           let st = this.state.bookings.active[tid].Estage;
           let uid = this.state.bookings.active[tid].uid;
           let h = this.state.bookings.active[tid][this.trans(st)].handler;
@@ -96,6 +97,7 @@ export default class Messenger extends React.Component {
           if(this.state.users && this.state.users[uid]) {
             tempConvos.unshift({
               threadId: tid,
+              initId: iid,
               name: this.state.users[uid].name,
               department: this.state.users[uid].department,
               text: dept + ' > ' + arr,
@@ -105,7 +107,7 @@ export default class Messenger extends React.Component {
               arrivedAt: a
             })
           }
-          if(tid == this.state.currentSelected)
+          if(this.state.currentConversation.initId && iid.substring(1) == this.state.currentConversation.initId.substring(1))
             tempCur = tempConvos[0];
         }
     }
@@ -238,6 +240,7 @@ export default class Messenger extends React.Component {
 
   loadContent(conversation)
   {
+    console.log(this.state.bookings)
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
@@ -245,11 +248,11 @@ export default class Messenger extends React.Component {
     </div>
     }
     else if(conversation.stage == 1)
-      return <Options load={() => this.setState({ loading: true })} updateId={id => this.setState({ currentSelected: id })} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
+      return <Options load={() => this.setState({ loading: true })} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     else
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
-        <ConfirmationForm load={() => this.setState({ loading: true })} updateId={id => this.setState({ currentSelected: id })} editable={true} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
+        <ConfirmationForm load={() => this.setState({ loading: true })} editable={true} data={{ ...this.state.currentConversation, bookings: this.state.bookings }} />
     </div>
     }
   }
@@ -274,7 +277,7 @@ export default class Messenger extends React.Component {
       <Container style={{padding:0, zIndex: 10}}>
         <Row  style={{height:'30%',backgroundColor:'#FAFAFA', boxShadow: '0 5px 5px rgba(0,0,0,0.22)', marginRight:0, marginLeft:0, paddingTop: 10 }}>
           <Col>
-          <ProfileCard data={this.state.currentConversation} name={name} />
+          <ProfileCard data={this.state.currentConversation} name={name} view={() => this.props.history.push('/admin/view-profile', { uid: this.state.bookings.active[this.state.currentSelected].uid })} />
           </Col>
           <Col>
           <div>

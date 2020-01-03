@@ -44,7 +44,7 @@ class Bookings extends React.Component {
           <Row>
             <div className="col">
               <Card className="shadow">
-                <Messenger />
+                <Messenger history={this.props.history} />
               </Card>
             </div>
           </Row>

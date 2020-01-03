@@ -80,7 +80,6 @@ class ConfirmationForm extends React.Component {
     temp['/bookings/active/'+'booking_'+timestamp] = newData;
 
     fire.database().ref().update(temp);
-    this.props.updateId('booking_'+timestamp);
   }
 
   render() {

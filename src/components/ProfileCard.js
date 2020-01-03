@@ -22,7 +22,9 @@ class ProfileCard extends React.Component {
             <CardBody style={{padding:5}}>
               <Row>
                 <div className="col">
-                <span style={{color:'#272727'}} className="h2 font-weight-bold mb-0">{this.props.data.name}</span>
+                <span style={{color:'#272727', cursor:'pointer'}} className="h2 font-weight-bold mb-0">
+                  {this.props.data.name} <Button onClick={() => this.props.view()} color='primary' style={{ marginLeft: 5, borderRadius: 30, padding: 0, paddingLeft: 5, paddingRight: 5 }}><i className="fa fa-search" /></Button>
+                </span>
                   <CardTitle className="text-uppercase text-muted mb-0">
                   {this.props.data.department}
                   </CardTitle>

@@ -3,7 +3,7 @@ import React from "react";
 
 import fire from './config/firebaseConfig';
 
-export default class App extends React.Component 
+export default class App extends React.Component
 {
     componentWillMount()
     {
@@ -21,7 +21,7 @@ export default class App extends React.Component
     render()
     {
         return (
-            <div className="bg-gradient-info" style={{display:'flex',width:window.innerWidth, height:window.innerHeight, 
+            <div className="bg-gradient-info" style={{display:'flex',width:window.innerWidth, height:window.innerHeight,
             alignItems:'center', justifyContent:'center', transition: `opacity ${1500}ms ease-in-out`,}}>
                 <img src={require('./assets/img/brand/argon-react-white.png')} style={{width:'40%', height:'30%'}} />
             </div>

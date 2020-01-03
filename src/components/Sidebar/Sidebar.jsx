@@ -81,7 +81,7 @@ class Sidebar extends React.Component {
   // creates the links that appear in the left menu / Sidebar
   createLinks = routes => {
     return routes.map((prop, key) => {
-      if(prop.layout !== "/auth")
+      if(prop.layout !== "/auth" && prop.path !== "/view-profile")
       return (
         <NavItem key={key}>
           <NavLink
@@ -243,19 +243,19 @@ class Sidebar extends React.Component {
             <Nav navbar>{this.createLinks(routes)}</Nav>
             {/* Divider */}
             <hr className="my-3" />
-            
+
             {/* Heading */}
             <h6 className="navbar-heading text-muted">Contact Us</h6>
 
             <div style={{display:'flex', alignItems:'center'}}>
               <i class="glyphicon glyphicon-phone" style={{color:'green'}}></i>
             <a style={{fontSize:13, paddingLeft:'10%'}}>9738826242</a></div>
-            
+
 
             <div style={{display:'flex', alignItems:'center', marginTop:'5%'}}>
             <i class="fa fa-envelope" aria-hidden="true" style={{color:'orange'}}></i>
             <a style={{fontSize:13, paddingLeft:'10%'}}>dummy@gmail.com</a></div>
-            
+
             {/* Navigation */}
             {/*
             <Nav className="mb-md-3" navbar>
