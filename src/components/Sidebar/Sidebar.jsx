@@ -52,6 +52,9 @@ import {
   Col
 } from "reactstrap";
 
+
+import fire from '../../config/firebaseConfig'
+
 var ps;
 
 class Sidebar extends React.Component {
@@ -255,6 +258,15 @@ class Sidebar extends React.Component {
             <div style={{display:'flex', alignItems:'center', marginTop:'5%'}}>
             <i class="fa fa-envelope" aria-hidden="true" style={{color:'orange'}}></i>
             <a style={{fontSize:13, paddingLeft:'10%'}}>dummy@gmail.com</a></div>
+
+            <button class="btn btn-icon btn-3 btn-info" type="button" style={{ width: '60%',minWidth:'40%', height: 40, alignSelf:'center', marginTop:20 }} onClick={()=>{
+        fire.auth().signOut().then(()=>{
+          this.props.history.push('/')
+        })
+      }}>
+  <span class="btn-inner--icon" style={{fontSize: 15}}><i class="ni ni-button-power"></i></span>
+  <span class="btn-inner--text" style={{fontSize: 13}}>Sign Out</span>
+</button>
             
             {/* Navigation */}
             {/*

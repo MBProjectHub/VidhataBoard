@@ -87,6 +87,7 @@ class Notifications extends React.Component {
 
           if(notification.val().initiatedTime === this.state.currentInitiated)
           {
+            fire.database().ref(`notifications/${notification.key}/opened`).set(true)
               let conversations = []
               let prevDate = ""
               Object.values(notification.val()['conversation']).map((val)=>{
@@ -104,16 +105,31 @@ class Notifications extends React.Component {
               currentFrom = notification.val().sentByname
               currentToken =  notification.key
               currentInitiated = notification.val().initiatedTime
+
+              notifications_arr.push({token:notification.key, 
+              sentByname: notification.val().sentByname, 
+              subject: notification.val().subject, 
+              timestamp:notification.val().timestamp,
+              sentToName: notification.val().sentToName,
+              initiatedTime: notification.val().initiatedTime,
+            sentTouid: notification.val().sentTouid,
+              opened:true}
+              )
           }
-          notifications_arr.push({token:notification.key, 
-                                  sentByname: notification.val().sentByname, 
-                                  subject: notification.val().subject, 
-                                  timestamp:notification.val().timestamp,
-                                  sentToName: notification.val().sentToName,
-                                  initiatedTime: notification.val().initiatedTime,
-                                sentTouid: notification.val().sentTouid}
-                                  
-                                  )
+          else
+          {
+            notifications_arr.push({token:notification.key, 
+              sentByname: notification.val().sentByname, 
+              subject: notification.val().subject, 
+              timestamp:notification.val().timestamp,
+              sentToName: notification.val().sentToName,
+              initiatedTime: notification.val().initiatedTime,
+            sentTouid: notification.val().sentTouid,
+              opened:notification.val().opened}
+              
+              )
+          }
+          
        })
        if(currentToken!==null)
       this.setState({notifs: notifications_arr, allNotifs: notifs.val(), currentToken: currentToken, currentFrom: currentFrom,
@@ -210,7 +226,8 @@ sendNotification()
           sentToMail: recieverId,
           sentTouid: recieveruid,
           sentToName: this.state.allUsers[recieveruid].name,
-          initiatedTime: DateString
+          initiatedTime: DateString,
+          opened:false
         },()=>{
           fire.database().ref(`users/${recieveruid}/notifications/notify_${DateString}/`).set(
             {
@@ -222,7 +239,8 @@ sendNotification()
             sentToMail: recieverId,
             sentTouid: recieveruid,
             sentToName: this.state.allUsers[recieveruid].name,
-            initiatedTime: DateString
+            initiatedTime: DateString,
+            opened:true
           })
         }
         )
@@ -324,7 +342,9 @@ sendNotification()
     tempnotif['subject'] =   newnotif['subject'] 
     tempnotif['timestamp'] = newnotif['timestamp'] 
     tempnotif['initiatedTime'] = newnotif['initiatedTime'] 
+    tempnotif['opened'] = false
     
+    newnotif['opened'] = true
     let convoString = 'convo_'+DateString
 
     console.log('New notif',this.state.allNotifs)
@@ -361,7 +381,8 @@ sendNotification()
     
   }
   
-  close = () => this.setState({ open: false })
+  close = () => this.setState({ open: false ,
+    currentInitiated:''})
 
   ChatModal(){
     let subject = this.state.currentSubject
@@ -409,7 +430,7 @@ sendNotification()
 
   openChatModal(subject, from, token)
   {
-    
+    fire.database().ref(`notifications/${token}/opened`).set(true);
     let conversations = []
     let prevDate = ""
       conversations = []
@@ -436,7 +457,7 @@ sendNotification()
     for(var i=this.state.notifs.length-1; i>=0; i--)
     {
       items.push(
-        <tr>
+        <tr style={{backgroundColor: this.state.notifs[i].opened?'#fff' :'#78909c'}}>
           <td>
             <span class="mb-0 text-sm" >{this.state.notifs[i].sentByname}</span>  
           </td>
@@ -522,6 +543,7 @@ sendNotification()
 
   render() {
     console.log(this.state.currentModalConvos)
+    console.log(this.state.notifs)
     return (
       <>
         <EmptyHeader />

@@ -1,23 +1,5 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 
-// reactstrap components
 import {
   Button,
   Card,
@@ -38,13 +20,23 @@ import fire from 'firebase'
 import CircularProgress from '@material-ui/core/CircularProgress';
 class Login extends React.Component {
 
-  state = {loading:false}
+  state = {loading:false, passcode:null}
+
+  componentDidMount()
+  {
+    fire.database().ref('passcode').on('value',(passcode)=>{
+      this.setState({passcode:passcode.val()})
+    })
+  }
 
   firebaseLogin()
   {
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
+    let passcode = document.getElementById('passcode').value;
 
+    if(passcode!==null && passcode === this.state.passcode+"")
+    {
     if(email.length!==0 && password.length!==0)
     {
       fire.auth().signInWithEmailAndPassword(email, password)
@@ -63,7 +55,13 @@ class Login extends React.Component {
     }
   }
 
- 
+else
+{
+  this.setState({loading:false})
+  alert("Incorrect Passcode");
+}
+
+}
   renderLoader()
   {
     if(this.state.loading)
@@ -92,7 +90,7 @@ class Login extends React.Component {
                         <i className="ni ni-key-25" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Passcode" />
+                    <Input id="passcode" placeholder="Passcode" />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup className="mb-3">
