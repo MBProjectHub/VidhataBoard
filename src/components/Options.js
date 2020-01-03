@@ -99,6 +99,7 @@ class Options extends React.Component {
     let temp = timestamp.split('_');
     let formatted = temp[2]+'-'+temp[1]+'-'+temp[0]+' '+temp[3]+':'+temp[4];
     newData.options.arrivedAt = formatted;
+    newData['initId'] = '!' + this.props.data.initId.substring(1);
 
     temp = {};
     temp['/users/'+newData.uid+'/bookings/'+this.props.data.threadId] = {};

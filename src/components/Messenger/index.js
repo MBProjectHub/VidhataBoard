@@ -142,6 +142,9 @@ export default class Messenger extends React.Component {
 
   ClickRequest(conversation)
   {
+    if(conversation.initId.charAt(0) == '*')
+      fire.database().ref('/bookings/active/'+conversation.threadId).update({ initId: '_' + conversation.initId.substring(1) })
+
     this.state.conversations.forEach(conversation => {
       document.getElementById(conversation.threadId).style.background = "#fff"
       });
@@ -313,11 +316,11 @@ export default class Messenger extends React.Component {
           <div style={{ height: 60, width: 2, backgroundColor: '#0F2972', margin: '5%', marginRight: '3%' }} />
           <div>
             <div className="conversation-info">
-              <h1 className="conversation-title">{ conversation.name }</h1>
-              <span className="text-primary mr-2" style={{ fontSize: 12 }}>
+              <h1 className="conversation-title" style={{ fontWeight: conversation.initId.charAt(0) == '*'? 900 : 500 }}>{ conversation.name }</h1>
+              <span className="text-primary mr-2" style={{ fontSize: 12, fontWeight: conversation.initId.charAt(0) == '*'? 900 : 300 }}>
                 {conversation.threadId.split('_')[3]+'-'+conversation.threadId.split('_')[2]+'-'+conversation.threadId.split('_')[1]}
               </span>
-              <p className="conversation-snippet">{ conversation.text }</p>
+              <p className="conversation-snippet" style={{ fontWeight: conversation.initId.charAt(0) == '*'? 900 : 300 }}>{ conversation.text }</p>
             </div>
           </div>
         </div>
