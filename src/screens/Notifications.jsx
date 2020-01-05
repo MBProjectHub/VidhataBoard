@@ -235,7 +235,7 @@ sendNotification()
           sentTouid: this.state.recieverId,
           sentToName: this.state.name,
           initiatedTime: DateString,
-          opened:false
+          opened:true
         },()=>{
           fire.database().ref(`users/${this.state.recieverId}/notifications/notify_${DateString}/`).set(
             {
@@ -248,7 +248,7 @@ sendNotification()
             sentTouid: this.state.recieverId,
             sentToName: this.state.name,
             initiatedTime: DateString,
-            opened:true
+            opened:false
           })
         }
         )
