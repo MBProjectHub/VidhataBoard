@@ -25,9 +25,11 @@ class ConfirmationForm extends React.Component {
     dept: '',
     arr: '',
     date: '',
+    time: '',
+    airline: '',
+    flight: '',
     fare: 0,
-    pnr: '',
-    flight: ''
+    pnr: ''
   }
 
   componentDidMount() {
@@ -40,7 +42,9 @@ class ConfirmationForm extends React.Component {
         dept: selected.dept,
         arr: selected.arr,
         fare: selected.fare,
-        date: selected.date
+        date: selected.date,
+        time: selected.time,
+        airline: selected.airline
        });
   }
 
@@ -117,7 +121,6 @@ class ConfirmationForm extends React.Component {
                               value={this.state.dept}
                               onChange={dept => this.setState({ dept: dept.target.value })}
                               style={{pointerEvents:!this.props.editable?'none':'auto'}}
-                              defaultValue={'Hey'}
                             />
                           </FormGroup>
                         </Col>
@@ -167,15 +170,15 @@ class ConfirmationForm extends React.Component {
                               className="form-control-label"
                               htmlFor="input-last-name"
                             >
-                              Fare
+                              Time
                             </label>
                             <Input
                               className="form-control-alternative"
                               id="input-last-name"
-                              placeholder="Price"
-                              type="number"
-                              value={this.state.fare}
-                              onChange={fare => this.setState({ fare: fare.target.value })}
+                              placeholder="Time"
+                              type="time"
+                              value={this.state.time}
+                              onChange={time => this.setState({ time: time.target.value })}
                               style={{pointerEvents:!this.props.editable?'none':'auto'}}
                             />
                           </FormGroup>
@@ -186,17 +189,17 @@ class ConfirmationForm extends React.Component {
                           <FormGroup>
                             <label
                               className="form-control-label"
-                              htmlFor="input-first-name"
+                              htmlFor="input-last-name"
                             >
-                              PNR
+                              Airline
                             </label>
                             <Input
                               className="form-control-alternative"
-                              id="input-first-name"
-                              placeholder="PNR Number"
+                              id="input-last-name"
+                              placeholder="Airline"
                               type="text"
-                              value={this.state.pnr}
-                              onChange={pnr => this.setState({ pnr: pnr.target.value })}
+                              value={this.state.airline}
+                              onChange={airline => this.setState({ airline: airline.target.value })}
                               style={{pointerEvents:!this.props.editable?'none':'auto'}}
                             />
                           </FormGroup>
@@ -216,6 +219,46 @@ class ConfirmationForm extends React.Component {
                               type="text"
                               value={this.state.flight}
                               onChange={flight => this.setState({ flight: flight.target.value })}
+                              style={{pointerEvents:!this.props.editable?'none':'auto'}}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-last-name"
+                            >
+                              Fare
+                            </label>
+                            <Input
+                              className="form-control-alternative"
+                              id="input-last-name"
+                              placeholder="Price"
+                              type="number"
+                              value={this.state.fare}
+                              onChange={fare => this.setState({ fare: fare.target.value })}
+                              style={{pointerEvents:!this.props.editable?'none':'auto'}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="input-first-name"
+                            >
+                              PNR
+                            </label>
+                            <Input
+                              className="form-control-alternative"
+                              id="input-first-name"
+                              placeholder="PNR Number"
+                              type="text"
+                              value={this.state.pnr}
+                              onChange={pnr => this.setState({ pnr: pnr.target.value })}
                               style={{pointerEvents:!this.props.editable?'none':'auto'}}
                             />
                           </FormGroup>
