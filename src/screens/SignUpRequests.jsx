@@ -45,7 +45,8 @@ class SignUpRequests extends React.Component {
   componentDidMount() {
     fire.database().ref('/users/'+fire.auth().currentUser.uid).on('value', user => {
       fire.database().ref('/signup').on('value', snapshot => {
-        this.setState({ pending: snapshot.val().pendDom, allowed: snapshot.val().apprDom, rejected: snapshot.val().rejDom, name: user.val().name })
+        if(snapshot.val() && snapshot.val().pendDom && snapshot.val().apprDom && snapshot.val().rejDom)
+          this.setState({ pending: snapshot.val().pendDom, allowed: snapshot.val().apprDom, rejected: snapshot.val().rejDom, name: user.val().name })
       });
     });
   }

@@ -26,7 +26,7 @@ import fire from '../../config/firebaseConfig';
 export default class Messenger extends React.Component {
   state = {
     bookings: {},
-    searchresults: [],
+    searchResults: [],
     searching: false,
     filterTitle: 'Filter Bookings',
     conversations:[],
@@ -107,7 +107,9 @@ export default class Messenger extends React.Component {
               threadId: tid,
               initId: iid,
               name: this.state.users[uid].name,
-              department: this.state.users[uid].department,
+              meal: this.state.users[uid].mealPreference,
+              seat: this.state.users[uid].seatPreference,
+              phone: this.state.users[uid].phone,
               text: dept + ' > ' + arr,
               stage: st,
               handler: h,
@@ -297,7 +299,7 @@ export default class Messenger extends React.Component {
         </Row>
       </Container>
 
-      {this.state.cover?<div style={{ position: 'absolute', width: '100%', height: '79%', bottom: 0, background: '#79B9E1', zIndex: 5, opacity: 0.5 }} /> : ''}
+      {this.state.cover?<div style={{ position: 'absolute', width: '100%', height: '76%', bottom: 0, background: '#79B9E1', zIndex: 5, opacity: 0.5 }} /> : ''}
       {this.loadContent(this.state.currentConversation)}
 
       <div  style={{position:'absolute', zIndex: 10, bottom :0 , width:'100%',height:'9%', backgroundColor:'#FAFAFA', boxShadow: '0 -10px 15px -10px rgba(0,0,0,0.22)'}}>

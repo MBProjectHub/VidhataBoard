@@ -26,7 +26,7 @@ class ProfileCard extends React.Component {
                   {this.props.data.name} <Button onClick={() => this.props.view()} color='primary' style={{ marginLeft: 5, borderRadius: 30, padding: 0, paddingLeft: 5, paddingRight: 5 }}><i className="fa fa-search" /></Button>
                 </span>
                   <CardTitle className="text-uppercase text-muted mb-0">
-                  {this.props.data.department}
+                  {this.props.data.seat} | {this.props.data.meal}<br/>{this.props.data.phone}
                   </CardTitle>
 
                 </div>
