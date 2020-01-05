@@ -54,13 +54,36 @@ import {
 
 
 import fire from '../../config/firebaseConfig'
+import './Sidebar.css'
 
 var ps;
 
 class Sidebar extends React.Component {
   state = {
-    collapseOpen: false
+    collapseOpen: false,
+    notifVal: 0
   };
+
+  componentDidMount()
+  {
+    fire.database().ref('notifications/').on('value',(notifs)=>{
+      let notifCounter = 0
+      if(notifs.val()!==null)
+      {
+        Object.values(notifs.val()).map(val=>{
+          console.log(val.opened)
+          if(val.opened===false)
+          {
+            notifCounter = notifCounter+ 1
+          }
+        })
+        
+      this.setState({notifVal: notifCounter})
+      }
+      
+    })  
+  }
+
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
@@ -85,19 +108,44 @@ class Sidebar extends React.Component {
   createLinks = routes => {
     return routes.map((prop, key) => {
       if(prop.layout !== "/auth" && prop.path !== "/view-profile")
-      return (
-        <NavItem key={key}>
-          <NavLink
-            to={prop.layout + prop.path}
-            tag={NavLinkRRD}
-            onClick={this.closeCollapse}
-            activeClassName="active"
-          >
-            <i className={prop.icon} />
-            {prop.name}
-          </NavLink>
-        </NavItem>
-      );
+      {
+      if(prop.name === "Notifications")
+      {
+        return (
+          <NavItem key={key}>
+            <NavLink
+              to={prop.layout + prop.path}
+              tag={NavLinkRRD}
+              onClick={this.closeCollapse}
+              activeClassName="active"
+            >
+              <i className={prop.icon} />
+              {prop.name}
+              <div className="circle">
+                  <p>{this.state.notifVal}</p>
+              </div>
+            </NavLink>
+          </NavItem>
+        );
+      }
+      else
+      {
+        return (
+          <NavItem key={key}>
+            <NavLink
+              to={prop.layout + prop.path}
+              tag={NavLinkRRD}
+              onClick={this.closeCollapse}
+              activeClassName="active"
+            >
+              <i className={prop.icon} />
+              {prop.name}
+            </NavLink>
+          </NavItem>
+        );
+      }
+    }
+      
     });
   };
   render() {
