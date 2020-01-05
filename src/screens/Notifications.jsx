@@ -41,7 +41,7 @@ import fire from '../config/firebaseConfig';
 import EmptyHeader from "components/Headers/EmptyHeader.jsx";
 import NotifTabs from "components/NotifTabs.js";
 import ConversationSearch from '../components/ConversationSearch'
-
+import '../components/ConversationSearch/ConversationSearch.css';
 
 
 import { Button as SemButton, Header, Icon, Image, Modal, Form, TextArea, Label, Loader, Dimmer } from 'semantic-ui-react'
@@ -67,6 +67,7 @@ class Notifications extends React.Component {
   {
     this.retrieveFirebaseData()
   }
+
 
 
   async retrieveFirebaseData()
@@ -132,11 +133,11 @@ class Notifications extends React.Component {
           
        })
        if(currentToken!==null)
-      this.setState({notifs: notifications_arr, allNotifs: notifs.val(), currentToken: currentToken, currentFrom: currentFrom,
+      this.setState({notifs: notifications_arr, searchNotif: notifications_arr ,allNotifs: notifs.val(), currentToken: currentToken, currentFrom: currentFrom,
         currentSubject: currentSubject, currentInitiated: currentInitiated, currentModalConvos: currentModalConvos
       })
       else
-      this.setState({notifs: notifications_arr, allNotifs: notifs.val()
+      this.setState({notifs: notifications_arr,searchNotif: notifications_arr, allNotifs: notifs.val()
       })
     })
   
@@ -502,6 +503,24 @@ sendNotification()
     }
   }
 
+  searchBarChange(val){
+    let tempnotif = []
+    this.state.searchNotif.forEach(noti=>{
+      if(noti.subject.toLowerCase().startsWith(val.toLowerCase()) || 
+      noti.sentToName.toLowerCase().startsWith(val.toLowerCase()) || 
+      noti.timestamp.toLowerCase().startsWith(val.toLowerCase())  ||
+      noti.subject.toLowerCase().includes(val.toLowerCase()) || 
+      noti.sentToName.toLowerCase().includes(val.toLowerCase()) || 
+      noti.timestamp.toLowerCase().includes(val.toLowerCase())
+      )
+      {
+        tempnotif.push(noti)
+      }
+    })
+    console.log(val, tempnotif)
+    this.setState({notifs:tempnotif})
+  }
+
   received() {
     return (
       <div class="table-responsive">
@@ -509,7 +528,14 @@ sendNotification()
           <Card className="shadow">
             <CardHeader className="border-0">
               <h3 className="mb-0">Your Notifications</h3>
-              <ConversationSearch placeholder="Search Notifications"/>
+              <div className="conversation-search">
+                <input
+                  type="search"
+                  className="conversation-search-input"
+                  placeholder="Search Notifications"
+                  onChange={e => this.searchBarChange(e.target.value)}
+                />
+              </div>
             </CardHeader>
               <table class="table align-items-center">
                 <thead class="thead-light">
@@ -542,8 +568,6 @@ sendNotification()
   }
 
   render() {
-    console.log(this.state.currentModalConvos)
-    console.log(this.state.notifs)
     return (
       <>
         <EmptyHeader />
