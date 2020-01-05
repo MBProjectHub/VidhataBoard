@@ -18,6 +18,7 @@
 import React from "react";
 
 // reactstrap components
+import _ from 'lodash'
 import {
   Card,
   CardHeader,
@@ -44,7 +45,9 @@ import ConversationSearch from '../components/ConversationSearch'
 import '../components/ConversationSearch/ConversationSearch.css';
 
 
-import { Button as SemButton, Header, Icon, Image, Modal, Form, TextArea, Label, Loader, Dimmer } from 'semantic-ui-react'
+import { Button as SemButton, Header, Icon, 
+  Image, Modal, Form, TextArea, Label, Loader, Dimmer,
+  Search, Grid, Segment  } from 'semantic-ui-react'
 
 class Notifications extends React.Component {
 
@@ -59,7 +62,10 @@ class Notifications extends React.Component {
     notifications:{},
     users:null,
     allUsers:null,
-    currentInitiated:''
+    currentInitiated:'',
+    isLoading: false, results: [], value: '',
+    recieverId:null,
+    name:null
   }
 
   
@@ -179,19 +185,20 @@ class Notifications extends React.Component {
     return output;
 }
 
+
 sendNotification()
   {
     let subject = document.getElementById('notify_sub').value
     let message = document.getElementById('notify_msg').value
-    let recieverId = document.getElementById('exampleFormControlInput1').value
+    //let recieverId = document.getElementById('exampleFormControlInput1').value
 
-    if(this.state.users[recieverId]===undefined)
+    if(this.state.recieverId===null)
     {
       alert("Reciever Email not found")
       return
     }
 
-    if(subject === "" || message === "" ||recieverId === ""  )
+    if(subject === "" || message === "" )
     {
       alert('Please enter all the fields')
       return;
@@ -205,7 +212,7 @@ sendNotification()
     let hour = this.leftPad(currentDate.getHours(),2)
     let mins = this.leftPad(currentDate.getMinutes(),2)
     let secs = this.leftPad(currentDate.getSeconds(),2)
-    let recieveruid = this.state.users[recieverId]
+    let recieveruid = this.state.recieverId
 
     let DateString = this.getTimestamp(5,30)
     let conversation = {}
@@ -224,22 +231,22 @@ sendNotification()
           timestamp: ""+date+"/"+month+"/"+year+" "+hour+":"+mins,
           sentByname: user.val().name,
           sentByEmail: user.val().email,
-          sentToMail: recieverId,
-          sentTouid: recieveruid,
-          sentToName: this.state.allUsers[recieveruid].name,
+          sentToMail: this.state.value,
+          sentTouid: this.state.recieverId,
+          sentToName: this.state.name,
           initiatedTime: DateString,
           opened:false
         },()=>{
-          fire.database().ref(`users/${recieveruid}/notifications/notify_${DateString}/`).set(
+          fire.database().ref(`users/${this.state.recieverId}/notifications/notify_${DateString}/`).set(
             {
             subject: subject,
             sentByuid: fire.auth().currentUser.uid,
             timestamp: ""+date+"/"+month+"/"+year+" "+hour+":"+mins,
             sentByname: user.val().name,
             sentByEmail: user.val().email,
-            sentToMail: recieverId,
-            sentTouid: recieveruid,
-            sentToName: this.state.allUsers[recieveruid].name,
+            sentToMail: this.state.value,
+            sentTouid: this.state.recieverId,
+            sentToName: this.state.name,
             initiatedTime: DateString,
             opened:true
           })
@@ -251,13 +258,54 @@ sendNotification()
 
     document.getElementById("notify_sub").value = ""
     document.getElementById("notify_msg").value = ""
-    document.getElementById("exampleFormControlInput1").value = ""
+    //document.getElementById("exampleFormControlInput1").value = ""
     
     this.retrieveFirebaseData()
     }
   }
 
+  searchName(name)
+  {
+    fire.database().ref('users').orderByChild("name").startAt(`${name}`).endAt(`${name}\uf8ff`).limitToFirst(5).once("value", (snap) => {
+      console.log("name",snap.val());
+  });
+  }
+
+
+  handleResultSelect = (e, { result }) => this.setState({ value: result.description, recieverId: result.name, name: result.title })
+
+  handleSearchChange = (e, { value }) => {
+    this.setState({ isLoading: true, value:value })
+
+    setTimeout(() => {
+      if (this.state.value.length < 1) return this.setState({ isLoading: false, results: [], value: '' })
+
+      fire.database().ref('users').orderByChild("name").startAt(`${value}`).endAt(`${value}\uf8ff`).limitToFirst(5).once("value", (snap) => {
+        let results = []
+        if(snap.val()!==null)
+        {
+        Object.entries(snap.val()).map(([key,item])=>{
+          results.push({name:key,title:item.name, description:item.email})
+        })
+      }
+        console.log(results)
+        this.setState({
+          isLoading: false,
+          results: results,
+        })
+      });
+
+      
+    }, 300)
+  }
+
   send() {
+    let email = ""
+    if(fire.auth().currentUser!==null)
+    {
+      email = fire.auth().currentUser.email
+    }
+    
     return(
       <Row>
         <div className="col">
@@ -268,15 +316,22 @@ sendNotification()
             <div class="container">
               <div class="row">
                 <div class="col">
-                  <button type="button" class="btn btn-default" style={{ width: '100%' }}>John Doe</button>
+    <button type="button" class="btn btn-default" style={{ width: '100%' }}>{email}</button>
                 </div>
                 <div class="col-md-auto">
                   <span class="lead"><i>To</i></span>
                 </div>
                 <div class="col">
-                  <div class="form-group">
-                    <input  type="email" class="form-control form-control-alternative" style={{ width: '100%' }} id="exampleFormControlInput1" placeholder="Receiver Email"/>
-                  </div>
+                <Search   
+                  loading={this.state.isLoading}
+                  onResultSelect={this.handleResultSelect}
+                  onSearchChange={_.debounce(this.handleSearchChange, 500, {
+                    leading: true,
+                  })}
+                  results={this.state.results}
+                  value={this.state.value}
+                  {...this.props}
+                />
                 </div>
               </div>
               <div class="row">
@@ -506,9 +561,7 @@ sendNotification()
   searchBarChange(val){
     let tempnotif = []
     this.state.searchNotif.forEach(noti=>{
-      if(noti.subject.toLowerCase().startsWith(val.toLowerCase()) || 
-      noti.sentToName.toLowerCase().startsWith(val.toLowerCase()) || 
-      noti.timestamp.toLowerCase().startsWith(val.toLowerCase())  ||
+      if(
       noti.subject.toLowerCase().includes(val.toLowerCase()) || 
       noti.sentToName.toLowerCase().includes(val.toLowerCase()) || 
       noti.timestamp.toLowerCase().includes(val.toLowerCase())

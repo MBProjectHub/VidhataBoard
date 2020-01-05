@@ -66,17 +66,21 @@ class Sidebar extends React.Component {
 
   componentDidMount()
   {
-    let notifCounter = 0
     fire.database().ref('notifications/').on('value',(notifs)=>{
-      Object.values(notifs.val()).map(val=>{
-        console.log(val.opened)
-        if(val.opened===false)
-        {
-          notifCounter = notifCounter+ 1
-        }
-      })
+      let notifCounter = 0
+      if(notifs.val()!==null)
+      {
+        Object.values(notifs.val()).map(val=>{
+          console.log(val.opened)
+          if(val.opened===false)
+          {
+            notifCounter = notifCounter+ 1
+          }
+        })
+        
+      this.setState({notifVal: notifCounter})
+      }
       
-    this.setState({notifVal: notifCounter})
     })  
   }
 
