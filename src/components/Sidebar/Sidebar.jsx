@@ -259,7 +259,7 @@ class Sidebar extends React.Component {
             <i class="fa fa-envelope" aria-hidden="true" style={{color:'orange'}}></i>
             <a style={{fontSize:13, paddingLeft:'10%'}}>dummy@gmail.com</a></div>
 
-            <button class="btn btn-icon btn-3 btn-info" type="button" style={{ width: '60%',minWidth:'40%', height: 40, alignSelf:'center', marginTop:20 }} onClick={()=>{
+            <button class="btn btn-icon btn-3 btn-info" type="button" style={{ width: '60%',minWidth:'40%',paddingTop:6,   alignSelf:'center', marginTop:20 }} onClick={()=>{
         fire.auth().signOut().then(()=>{
           this.props.history.push('/')
         })

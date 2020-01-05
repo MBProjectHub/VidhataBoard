@@ -312,14 +312,6 @@ class Profile extends React.Component {
           </Col>
         </Row>
       </div>
-      <button class="btn btn-icon btn-3 btn-info" type="button" style={{ marginTop: 30, width: '100%', height: 70  }} onClick={()=>{
-        fire.auth().signOut().then(()=>{
-          this.props.history.push('/')
-        })
-      }}>
-  <span class="btn-inner--icon" style={{fontSize: 18}}><i class="ni ni-button-power"></i></span>
-  <span class="btn-inner--text" style={{fontSize: 16}}>Sign Out</span>
-</button>
     </Form>
     }
   }
@@ -330,7 +322,6 @@ class Profile extends React.Component {
     {
       return <Button
       color="primary"
-      href="#pablo"
       onClick={()=>{this.setState({editing:false})}}
       size="sm"
     >
@@ -341,7 +332,6 @@ class Profile extends React.Component {
     {
       return <Button
       color="primary"
-      href="#pablo"
       onClick={()=>{this.setState({editing:"true"})}}
       size="sm"
     >
