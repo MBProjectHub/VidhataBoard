@@ -26,6 +26,9 @@ import fire from '../../config/firebaseConfig';
 export default class Messenger extends React.Component {
   state = {
     bookings: {},
+    searchresults: [],
+    searching: false,
+    filterTitle: 'Filter Bookings',
     conversations:[],
     users: {},
     currentProgressStage:"",
@@ -75,7 +78,12 @@ export default class Messenger extends React.Component {
     let update = true;
     let threads = [];
     if(this.state.bookings && this.state.bookings.active)
-      threads = Object.keys(this.state.bookings.active);
+    {
+      if(this.state.searching && this.state.searchResults)
+        threads = this.state.searchResults;
+      else
+        threads = Object.keys(this.state.bookings.active);
+    }
     let tempConvos = [];
     let tempCur = {};
     for(var i=0; i < threads.length; i++)
@@ -143,7 +151,7 @@ export default class Messenger extends React.Component {
   ClickRequest(conversation)
   {
     if(conversation.initId.charAt(0) == '*')
-      fire.database().ref('/bookings/active/'+conversation.threadId).update({ initId: '_' + conversation.initId.substring(1) })
+      fire.database().ref('/bookings/active/'+conversation.threadId).update({ initId: '-' + conversation.initId.substring(1) })
 
     this.state.conversations.forEach(conversation => {
       document.getElementById(conversation.threadId).style.background = "#fff"
@@ -243,7 +251,6 @@ export default class Messenger extends React.Component {
 
   loadContent(conversation)
   {
-    console.log(this.state.bookings)
     if(conversation.stage == 0)
     {
       return <div style={{height:'70%',paddingTop:'3%',marginTop:'2%',marginBottom:'2%', paddingBottom:'3%', overflowY:'scroll', width:'100%'}}>
@@ -318,7 +325,7 @@ export default class Messenger extends React.Component {
             <div className="conversation-info">
               <h1 className="conversation-title" style={{ fontWeight: conversation.initId.charAt(0) == '*'? 900 : 500 }}>{ conversation.name }</h1>
               <span className="text-primary mr-2" style={{ fontSize: 12, fontWeight: conversation.initId.charAt(0) == '*'? 900 : 300 }}>
-                {conversation.threadId.split('_')[3]+'-'+conversation.threadId.split('_')[2]+'-'+conversation.threadId.split('_')[1]}
+                {conversation.initId.split('_')[3]+'-'+conversation.initId.split('_')[2]+'-'+conversation.initId.split('_')[1]}
               </span>
               <p className="conversation-snippet" style={{ fontWeight: conversation.initId.charAt(0) == '*'? 900 : 300 }}>{ conversation.text }</p>
             </div>
@@ -326,6 +333,24 @@ export default class Messenger extends React.Component {
         </div>
       )
     }
+
+  filter(low, up, str) {
+    let searchResults = [];
+    let threads = [];
+
+    if(this.state.bookings && this.state.bookings.active)
+        threads = Object.keys(this.state.bookings.active);
+
+    for(let i=0; i<threads.length; i++)
+    {
+      let item = this.state.bookings.active[threads[i]];
+      if(item.confirmation.details != '-' &&
+          Boolean(Number(item.confirmation.details.time.substring(0,2)) >= low &&
+          Number(item.confirmation.details.time.substring(0,2)) < up))
+            searchResults.push(threads[i]);
+    }
+    this.setState({ filterTitle: str, searchResults: searchResults, searching: true }, () => this.loadConvos());
+  }
 
   render()
   {
@@ -336,18 +361,23 @@ export default class Messenger extends React.Component {
         <div className="conversation-list">
         <UncontrolledDropdown style={{ alignSelf: 'center', marginTop: '5%' }}>
           <DropdownToggle caret style={{ backgroundColor: '#5bc0de', color: '#fff', width: '100%' }}>
-            Filter Bookings
+            {this.state.filterTitle}
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header style={{ color: '#5bc0de' }}>BY TIME</DropdownItem>
-            <DropdownItem>12 AM - 12 PM</DropdownItem>
-            <DropdownItem>12 PM - 6 PM</DropdownItem>
-            <DropdownItem>6 PM - 12 AM</DropdownItem>
+            <DropdownItem onClick={() => this.filter(0, 12, '12 AM - 12 PM')}>12 AM - 12 PM</DropdownItem>
+            <DropdownItem onClick={() => this.filter(12, 18, '12 PM - 6 PM')}>12 PM - 6 PM</DropdownItem>
+            <DropdownItem onClick={() => this.filter(18, 24, '6 PM - 12 AM')}>6 PM - 12 AM</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem>Airlines</DropdownItem>
+            <DropdownItem
+              style={{ color: 'red' }}
+              onClick={() => this.setState({ filterTitle: 'Filter Bookings', searchResults: {}, searching: false }, () => this.loadConvos())}
+            >
+              X Remove Filter
+            </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
-          <ConversationSearch placeholder="Search Bookings"/>
+          <ConversationSearch bookings={this.state.bookings} users={this.state.users} sendData={ ret => this.setState({ searchResults: ret.results, searching: ret.searching }, () => this.loadConvos())}/>
           {this.state.loading?<LinearProgress />:''}
           {this.loadLeftPane()}
         </div>

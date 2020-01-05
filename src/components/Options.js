@@ -40,7 +40,6 @@ class Options extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("didup")
   if(prevProps != this.props) {
     let temp = this.props.data.bookings.active[this.props.data.threadId];
     if(temp && temp.options != '-')
