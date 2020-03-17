@@ -18,16 +18,11 @@
 import React from "react";
 
 // reactstrap components
-import {
-  Card,
-  CardHeader,
-  Container,
-  Row
-} from "reactstrap";
+import { Card, CardHeader, Container, Row } from "reactstrap";
 // core components
 import EmptyHeader from "../components/Headers/EmptyHeader.jsx";
 import Messenger from "components/Messenger";
-import AnalyticsHeader from '../components/Headers/AnalyticsHeader'
+import AnalyticsHeader from "../components/Headers/AnalyticsHeader";
 
 class Bookings extends React.Component {
   render() {
@@ -35,11 +30,19 @@ class Bookings extends React.Component {
       <>
         <EmptyHeader />
         {/* Page content */}
-        <div className="bg-gradient-info pb-8 pt-5 pt-md-8" style={{position:'absolute', marginTop:'10%', top:'70%', width:'100%'}}>
-        <div style={{ height: 0 }} />
+        <div
+          className="bg-gradient-info pb-8 pt-5 pt-md-8"
+          style={{
+            position: "absolute",
+            marginTop: "10%",
+            top: "70%",
+            width: "100%"
+          }}
+        >
+          <div style={{ height: 0 }} />
           <AnalyticsHeader />
         </div>
-        <Container className="mt--7 "  fluid>
+        <Container className="mt--7 " fluid>
           {/* Table */}
           <Row>
             <div className="col">
@@ -48,9 +51,7 @@ class Bookings extends React.Component {
               </Card>
             </div>
           </Row>
-
         </Container>
-
       </>
     );
   }
