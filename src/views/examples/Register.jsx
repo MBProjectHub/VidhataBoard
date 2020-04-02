@@ -58,19 +58,7 @@ class Register extends React.Component {
     if (this.state.loading) return <CircularProgress />;
     else
       return (
-        <Button
-          className="mt-4"
-          color="primary"
-          type="button"
-          onClick={() => {
-            this.setState(
-              {
-                loading: true
-              },
-              this.firebaseRegister.bind(this)
-            );
-          }}
-        >
+        <Button className="mt-4" color="primary" type="submit">
           Create account
         </Button>
       );
@@ -102,7 +90,6 @@ class Register extends React.Component {
                   if (
                     passcode.length !== 0 &&
                     firstName.length !== 0 &&
-                    middleName.length !== 0 &&
                     lastName.length !== 0 &&
                     email.length !== 0 &&
                     password.length !== 0
@@ -143,8 +130,8 @@ class Register extends React.Component {
                   }
                 }}
               >
-                {({ handleChange, values }) => (
-                  <Form>
+                {({ handleChange, values, handleSubmit }) => (
+                  <Form onSubmit={handleSubmit}>
                     <h6 className="heading-small text-muted mb-4">
                       User information
                     </h6>
@@ -182,7 +169,7 @@ class Register extends React.Component {
                               className="form-control-alternative"
                               defaultValue="Lucky"
                               id="firstName"
-                              placeholder="Name"
+                              placeholder="John"
                               type="text"
                               value={values.firstName}
                               onChange={handleChange}
@@ -202,7 +189,6 @@ class Register extends React.Component {
                               className="form-control-alternative"
                               defaultValue="Lucky"
                               id="middleName"
-                              placeholder="Name"
                               type="text"
                               value={values.middleName}
                               onChange={handleChange}
@@ -222,7 +208,7 @@ class Register extends React.Component {
                               className="form-control-alternative"
                               defaultValue="Lucky"
                               id="lastName"
-                              placeholder="Name"
+                              placeholder="Doe"
                               type="text"
                               value={values.lastName}
                               onChange={handleChange}
@@ -270,11 +256,10 @@ class Register extends React.Component {
                         </Col>
                       </Row>
                     </div>
+                    <div className="text-center">{this.renderLoader()} </div>
                   </Form>
                 )}
               </Formik>
-
-              <div className="text-center">{this.renderLoader()} </div>
             </CardBody>
           </Card>
         </Col>

@@ -397,7 +397,10 @@ export default class Messenger extends React.Component {
       console.log(this.state);
       let name = "-";
       if (this.state.users && this.state.currentConversation.handler != "-")
-        name = this.state.users[this.state.currentConversation.handler].name;
+        name =
+          this.state.users[this.state.currentConversation.handler].firstName +
+          " " +
+          this.state.users[this.state.currentConversation.handler].lastName;
       return (
         <div
           style={{

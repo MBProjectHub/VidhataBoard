@@ -21,7 +21,7 @@ import { Dimmer, Loader } from "semantic-ui-react";
 class Profile extends React.Component {
   state = {
     userDetails: null,
-    editing: "true"
+    editing: true
   };
 
   componentDidMount() {
@@ -50,21 +50,57 @@ class Profile extends React.Component {
           <h6 className="heading-small text-muted mb-4">User information</h6>
           <div className="pl-lg-4">
             <Row>
-              <Col lg="6">
+              <Col lg="4">
                 <FormGroup>
                   <label
                     className="form-control-label"
                     htmlFor="input-first-name"
                   >
-                    Name
+                    First Name
                   </label>
                   <Input
                     className="form-control-alternative"
-                    defaultValue={this.state.userDetails.name}
+                    defaultValue={this.state.userDetails.firstName}
                     id="name"
                     placeholder="Name"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
+                  />
+                </FormGroup>
+              </Col>
+              <Col lg="4">
+                <FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="input-first-name"
+                  >
+                    Middle Name
+                  </label>
+                  <Input
+                    className="form-control-alternative"
+                    defaultValue={this.state.userDetails.middleName}
+                    id="name"
+                    placeholder="Name"
+                    type="text"
+                    readOnly={this.state.editing}
+                  />
+                </FormGroup>
+              </Col>
+              <Col lg="4">
+                <FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="input-first-name"
+                  >
+                    Last Name
+                  </label>
+                  <Input
+                    className="form-control-alternative"
+                    defaultValue={this.state.userDetails.lastName}
+                    id="name"
+                    placeholder="Name"
+                    type="text"
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -81,7 +117,7 @@ class Profile extends React.Component {
                     placeholder="jesse@example.com"
                     type="email"
                     defaultValue={this.state.userDetails.email}
-                    readonly="false"
+                    readOnly={true}
                   />
                 </FormGroup>
               </Col>
@@ -104,7 +140,7 @@ class Profile extends React.Component {
                     id="dob"
                     placeholder="Date of Birth"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -119,7 +155,7 @@ class Profile extends React.Component {
                     id="phone"
                     placeholder="Phone Number"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -136,7 +172,7 @@ class Profile extends React.Component {
                     id="department"
                     placeholder="Department"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -151,7 +187,7 @@ class Profile extends React.Component {
                     id="seatpref"
                     placeholder="Seat Preference"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -166,7 +202,7 @@ class Profile extends React.Component {
                     placeholder="Meal Preference"
                     type="text"
                     defaultValue={this.state.userDetails.mealPreference}
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -189,7 +225,7 @@ class Profile extends React.Component {
                     id="passportno"
                     placeholder="Passport Number"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -204,7 +240,7 @@ class Profile extends React.Component {
                     id="doi"
                     placeholder="Date of Issue"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -221,7 +257,7 @@ class Profile extends React.Component {
                     id="poi"
                     placeholder="Place of Issue"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -236,7 +272,7 @@ class Profile extends React.Component {
                     id="doe"
                     placeholder="Date of Expiry"
                     type="text"
-                    readonly={this.state.editing}
+                    readOnly={this.state.editing}
                   />
                 </FormGroup>
               </Col>
@@ -265,7 +301,7 @@ class Profile extends React.Component {
         <Button
           color="primary"
           onClick={() => {
-            this.setState({ editing: "true" });
+            this.setState({ editing: true });
           }}
           size="sm"
         >
@@ -294,7 +330,7 @@ class Profile extends React.Component {
                       <h3 className="mb-0">My account</h3>
                     </Col>
                     <Col className="text-right" xs="4">
-                      {this.renderButton()}{" "}
+                      {this.renderButton()}
                     </Col>
                   </Row>
                 </CardHeader>

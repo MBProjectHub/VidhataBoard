@@ -17,22 +17,52 @@ import {
 class Requestform extends React.Component {
   state = {
     dept: "",
+    mealpref: "",
+    seatpref: "",
     arr: "",
     ddate: "",
     rdate: "",
+    email: "",
     ttype: 0,
     class: 0,
-    numTrav: 1,
-    travNames: [],
-    travNums: []
+    travellers: [],
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    phone: "",
+    acity: [],
+    dcity: []
   };
 
   componentDidMount() {
     let temp = this.props.data.bookings.active[this.props.data.threadId];
     if (temp && temp.request.details != "-")
       this.setState(temp.request.details);
+    this.fetchCity(temp.request.details.arr, "acity");
+    this.fetchCity(temp.request.details.dept, "dcity");
   }
-
+  fetchCity(query, type) {
+    if (query) {
+      fetch(
+        `https://voyager.goibibo.com/api/v2/flights_search/find_node_by_name_v2/?limit=10&v=2&search_query=${query}`,
+        {
+          method: "GET"
+        }
+      )
+        .then(res => res.json())
+        .then(data => {
+          this.setState({
+            [type]: data.data.r.map(el => {
+              return {
+                key: el.iata,
+                value: el.iata,
+                text: `${el.n} - ${el.iata} (${el.ct.n})`
+              };
+            })
+          });
+        });
+    }
+  }
   getNameFields(num) {
     let fields = [];
 
@@ -49,17 +79,12 @@ class Requestform extends React.Component {
                 id={i}
                 placeholder="Traveller Name"
                 type="text"
-                value={this.state.travNames[i]}
-                onChange={name => {
-                  let temp = this.state.travNames;
-                  temp[Number(name.target.getAttribute("id"))] =
-                    name.target.value;
-                  this.setState({ travNames: temp });
-                }}
+                value={this.state.travellers[i].name}
                 style={{
                   pointerEvents: !this.props.editable ? "none" : "auto",
                   marginTop: "2%"
                 }}
+                readOnly={true}
               />
             </FormGroup>
           </Col>
@@ -73,17 +98,12 @@ class Requestform extends React.Component {
                 id={i}
                 placeholder="Traveller Number"
                 type="number"
-                value={this.state.travNums[i]}
-                onChange={name => {
-                  let temp = this.state.travNums;
-                  temp[Number(name.target.getAttribute("id"))] =
-                    name.target.value;
-                  this.setState({ travNums: temp });
-                }}
+                value={this.state.travellers[i].number}
                 style={{
                   pointerEvents: !this.props.editable ? "none" : "auto",
                   marginTop: "2%"
                 }}
+                readOnly={true}
               />
             </FormGroup>
           </Col>
@@ -141,6 +161,7 @@ class Requestform extends React.Component {
                           type="radio"
                           checked={this.state.ttype == 1}
                           onChange={() => this.setState({ ttype: 1 })}
+                          disabled={true}
                         />
                         <label class="custom-control-label" for="customRadio5">
                           One Way
@@ -154,6 +175,7 @@ class Requestform extends React.Component {
                           type="radio"
                           checked={this.state.ttype == 2}
                           onChange={() => this.setState({ ttype: 2 })}
+                          disabled={true}
                         />
                         <label class="custom-control-label" for="customRadio6">
                           Round Trip
@@ -177,6 +199,7 @@ class Requestform extends React.Component {
                           type="radio"
                           checked={this.state.class == 1}
                           onChange={() => this.setState({ class: 1 })}
+                          disabled={true}
                         />
                         <label class="custom-control-label" for="customRadio7">
                           Business
@@ -190,11 +213,60 @@ class Requestform extends React.Component {
                           type="radio"
                           checked={this.state.class == 2}
                           onChange={() => this.setState({ class: 2 })}
+                          disabled={true}
                         />
                         <label class="custom-control-label" for="customRadio8">
                           Economy
                         </label>
                       </div>
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg="6">
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="input-country"
+                      >
+                        Seat Preference
+                      </label>
+
+                      <Input
+                        type="select"
+                        id="seatpref"
+                        name="seatpref"
+                        className="form-control-alternative"
+                        value={this.state.seatpref}
+                        disabled={true}
+                      >
+                        <option>Any</option>
+                        <option>Aisle</option>
+                        <option>Middle</option>
+                        <option>Window</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col lg="6">
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="input-country"
+                      >
+                        Meal Preference
+                      </label>
+                      <Input
+                        type="select"
+                        id="mealpref"
+                        name="mealpref"
+                        className="form-control-alternative"
+                        disabled={true}
+                        value={this.state.mealpref}
+                      >
+                        <option>Any</option>
+                        <option>Veg</option>
+                        <option>Non Veg</option>
+                      </Input>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -223,6 +295,7 @@ class Requestform extends React.Component {
                         style={{
                           pointerEvents: !this.props.editable ? "none" : "auto"
                         }}
+                        readOnly={true}
                       />
                     </FormGroup>
                   </Col>
@@ -246,6 +319,7 @@ class Requestform extends React.Component {
                         style={{
                           pointerEvents: !this.props.editable ? "none" : "auto"
                         }}
+                        readOnly={true}
                       />
                     </FormGroup>
                   </Col>
@@ -271,6 +345,7 @@ class Requestform extends React.Component {
                         style={{
                           pointerEvents: !this.props.editable ? "none" : "auto"
                         }}
+                        readOnly={true}
                       />
                     </FormGroup>
                   </Col>
@@ -294,6 +369,7 @@ class Requestform extends React.Component {
                         style={{
                           pointerEvents: !this.props.editable ? "none" : "auto"
                         }}
+                        readOnly={true}
                       />
                     </FormGroup>
                   </Col>
@@ -317,20 +393,27 @@ class Requestform extends React.Component {
                         className="form-control-alternative"
                         id="input-city"
                         type="number"
-                        value={this.state.numTrav}
+                        value={
+                          this.state.travellers
+                            ? this.state.travellers.length + 1
+                            : 1
+                        }
                         onChange={num =>
                           this.setState({ numTrav: num.target.value })
                         }
                         style={{
                           pointerEvents: !this.props.editable ? "none" : "auto"
                         }}
+                        readOnly={true}
                       />
                     </FormGroup>
                   </Col>
                 </Row>
               </div>
               <div className="pl-lg-4">
-                {this.getNameFields(this.state.numTrav - 1)}
+                {this.getNameFields(
+                  this.state.travellers ? this.state.travellers.length : 0
+                )}
               </div>
               <hr className="my-4" />
             </Form>

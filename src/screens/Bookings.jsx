@@ -35,7 +35,7 @@ class Bookings extends React.Component {
           style={{
             position: "absolute",
             marginTop: "10%",
-            top: "70%",
+            top: "80%",
             width: "100%"
           }}
         >
